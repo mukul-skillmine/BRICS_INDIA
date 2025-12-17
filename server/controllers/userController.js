@@ -1,5 +1,7 @@
 import bcrypt from 'bcrypt';
 import * as UserManager from '../managers/userManager.js';
+import * as UserEventMappingManager from '../managers/userManager.js';
+import * as EventManager from '../managers/eventManager.js';
 
 /**
  * ==================== CREATE USER ====================
@@ -226,6 +228,137 @@ export const loginUser = async (req, res) => {
     }
 
     res.status(200).json({ success: true, message: 'Login successful' });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+
+// ==================== USER EVENT MAPPING CONTROLLERS ====================
+
+/**
+ * ==================== REGISTER EVENT ====================
+ */
+export const registerEvent = async (req, res) => {
+  try {
+    if (!req.body.payload) {
+      return res.status(406).json({ success: false, message: 'Request data missing!' });
+    }
+
+    const params = req.body.payload;
+
+    if (!params.user_id || !params.event_id) {
+      return res.status(406).json({ success: false, message: 'User ID and Event ID are required' });
+    }
+
+    const event = await EventManager.getEventDetails({ _id: params.event_id });
+    if (!event || !event.is_active || !event.registration_open) {
+      return res.status(403).json({ success: false, message: 'Event registration is closed' });
+    }
+
+    const alreadyRegistered = await UserEventMappingManager.getUserEventMapping({
+      user_id: params.user_id,
+      event_id: params.event_id
+    });
+
+    if (alreadyRegistered) {
+      return res.status(409).json({ success: false, message: 'User already registered for this event' });
+    }
+
+    const totalRegistrations = await UserEventMappingManager.countUserEventMappings({
+      event_id: params.event_id,
+      status: 'registered'
+    });
+
+    if (totalRegistrations >= event.capacity) {
+      return res.status(409).json({ success: false, message: 'Event capacity full' });
+    }
+
+    const payload = {
+      user_id: params.user_id,
+      event_id: params.event_id,
+      status: 'registered'
+    };
+
+    await UserEventMappingManager.createUserEventMapping(payload);
+
+    res.status(200).json({ success: true, message: 'Event registered successfully' });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * ==================== CANCEL REGISTRATION ====================
+ */
+export const cancelRegistration = async (req, res) => {
+  try {
+    if (!req.body.payload) {
+      return res.status(406).json({ success: false, message: 'Request data missing!' });
+    }
+
+    const params = req.body.payload;
+
+    if (!params.user_id || !params.event_id) {
+      return res.status(406).json({ success: false, message: 'User ID and Event ID required' });
+    }
+
+    await UserEventMappingManager.updateUserEventMapping(
+      { user_id: params.user_id, event_id: params.event_id },
+      { status: 'cancelled' }
+    );
+
+    res.status(200).json({ success: true, message: 'Registration cancelled successfully' });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * ==================== USER REGISTRATIONS ====================
+ */
+export const getUserRegistrations = async (req, res) => {
+  try {
+    if (!req.query.payload) {
+      return res.status(406).json({ success: false, message: 'Request data missing!' });
+    }
+
+    const params = JSON.parse(req.query.payload);
+
+    if (!params.user_id) {
+      return res.status(406).json({ success: false, message: 'User ID is required' });
+    }
+
+    const data = await UserEventMappingManager.getUserEventMappingList({
+      user_id: params.user_id
+    });
+
+    res.status(200).json({ success: true, data });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * ==================== EVENT REGISTRATIONS ====================
+ */
+export const getEventRegistrations = async (req, res) => {
+  try {
+    if (!req.query.payload) {
+      return res.status(406).json({ success: false, message: 'Request data missing!' });
+    }
+
+    const params = JSON.parse(req.query.payload);
+
+    if (!params.event_id) {
+      return res.status(406).json({ success: false, message: 'Event ID is required' });
+    }
+
+    const data = await UserEventMappingManager.getUserEventMappingList({
+      event_id: params.event_id
+    });
+
+    res.status(200).json({ success: true, data });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
