@@ -9,9 +9,3 @@ const hashPassword = async (password) => {
 };
 
 export default hashPassword;
-
-// Smtc#2025!@#N3w
-
-
-//  in registartion form if we select india then show state , city , pincode , full address for indian user or other user only fulladdress
-
