@@ -2,6 +2,12 @@ import mongoose from 'mongoose';
 
 const eventSchema = new mongoose.Schema(
   {
+    event_id: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true
+    },
     name: {
       type: String,
       required: [true, 'Event name is required'],
@@ -13,29 +19,17 @@ const eventSchema = new mongoose.Schema(
     description: {
       type: String,
       trim: true,
-      maxlength: [500, 'Description cannot exceed 500 characters']
+      maxlength: [2000, 'Description cannot exceed 500 characters']
     },
 
     start_time: {
       type: Date,
-      required: [true, 'Event start time is required'],
-      validate: {
-        validator(value) {
-          return value instanceof Date && !isNaN(value);
-        },
-        message: 'Please provide a valid start time'
-      }
+      required: [true, 'Event start time is required']
     },
 
     end_time: {
       type: Date,
-      required: [true, 'Event end time is required'],
-      validate: {
-        validator(value) {
-          return value instanceof Date && !isNaN(value);
-        },
-        message: 'Please provide a valid end time'
-      }
+      required: [true, 'Event end time is required']
     },
 
     location: {
