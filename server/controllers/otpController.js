@@ -7,7 +7,7 @@ export const sendOTP = async (req, res) => {
 
   try {
     const otp = crypto.randomInt(100000, 999999).toString();
-    const otpExpires = new Date(Date.now() + 5 * 60 * 1000);
+    const otpExpires = new Date(Date.now() + 15 * 60 * 1000);
 
     let user = await Otp.findOne({ email });
 
@@ -21,8 +21,7 @@ export const sendOTP = async (req, res) => {
 
     await sendEmail({
       to: email,
-      subject: "Your OTP Code",
-      text: `Your OTP is ${otp}`,
+      otp,
     });
 
     res.json({ message: "OTP sent successfully" });
