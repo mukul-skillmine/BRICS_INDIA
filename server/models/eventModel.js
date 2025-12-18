@@ -23,12 +23,12 @@ const eventSchema = new mongoose.Schema(
     },
 
     start_date: {
-      type: Date,
+      type: String,
       required: [true, 'Event start date is required']
     },
 
     end_date: {
-      type: Date,
+      type: String,
       required: [true, 'Event end date is required']
     },
 
@@ -50,6 +50,20 @@ const eventSchema = new mongoose.Schema(
       trim: true,
       minlength: [2, 'Location must be at least 2 characters'],
       maxlength: [255, 'Location cannot exceed 255 characters']
+    },
+
+    event_type: {
+      type: String,
+      enum: ['In-person', 'Virtual', 'Hybrid'],
+      required: [true, 'Event type is required'],
+      default: 'In-person'
+    },
+
+    source_language: {
+      type: String,
+      required: [true, 'Event source language is required'],
+      trim: true,
+      default: 'English'
     },
 
     capacity: {

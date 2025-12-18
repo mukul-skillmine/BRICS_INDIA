@@ -2,32 +2,33 @@ import { generateEventId } from '../helpers/eventGenration.js';
 import * as EventManager from '../managers/eventManager.js';
 
 /**
+ * Format date as "22 March 2025"
+ */
+const formatDate = (date) => {
+  const options = { day: '2-digit', month: 'long', year: 'numeric' };
+  return new Date(date).toLocaleDateString('en-GB', options);
+};
+
+/**
  * ==================== CREATE EVENT ====================
  */
 export const createEvent = async (req, res) => {
   try {
-    if (!req.body.payload) {
-      return res.status(406).json({ success: false, message: 'Request data missing!' });
-    }
-
     const params = req.body.payload;
+    if (!params) return res.status(406).json({ success: false, message: 'Request data missing!' });
 
-    // Required fields check
+    // Required fields validation
     if (!params.name || !params.start_date || !params.end_date || !params.start_time || !params.end_time || !params.capacity) {
       return res.status(406).json({ success: false, message: 'Required fields missing!' });
     }
 
-    const startDate = new Date(params.start_date);
-    const endDate = new Date(params.end_date);
-
-    if (startDate > endDate) {
+    if (new Date(params.start_date) > new Date(params.end_date)) {
       return res.status(422).json({ success: false, message: 'End date must be equal or after start date' });
     }
 
-    // Validate start_time and end_time format "HH:mm"
     const timeRegex = /^([0-1]\d|2[0-3]):([0-5]\d)$/;
     if (!timeRegex.test(params.start_time) || !timeRegex.test(params.end_time)) {
-      return res.status(422).json({ success: false, message: 'Start time and End time must be in HH:mm format' });
+      return res.status(422).json({ success: false, message: 'Time must be in HH:mm format' });
     }
 
     if (params.capacity < 1) {
@@ -37,19 +38,24 @@ export const createEvent = async (req, res) => {
     // Generate Event ID
     const eventId = await generateEventId(params.name, params.start_date);
 
+    let start_date = formatDate(new Date(params.start_date));
+    let end_date = formatDate(new Date(params.end_date));
+
     const payload = {
       event_id: eventId,
       name: params.name.trim(),
       description: params.description || '',
-      start_date: startDate,
-      end_date: endDate,
+      start_date: start_date,
+      end_date: end_date,
       start_time: params.start_time,
       end_time: params.end_time,
       location: params.location || '',
       capacity: params.capacity,
-      is_active: true,
-      registration_open: true,
-      created_by: params.created_by // ObjectId of the user creating the event
+      is_active: params.is_active ?? true,
+      registration_open: params.registration_open ?? true,
+      created_by: params.created_by,
+      event_type: params.event_type || 'In-person',
+      source_language: params.source_language || 'English'
     };
 
     await EventManager.createEvent(payload);
@@ -65,20 +71,12 @@ export const createEvent = async (req, res) => {
  */
 export const updateEvent = async (req, res) => {
   try {
-    if (!req.body.payload) {
-      return res.status(406).json({ success: false, message: 'Request data missing!' });
-    }
-
     const params = req.body.payload;
-
-    if (!params.id) {
-      return res.status(406).json({ success: false, message: 'Event ID is required' });
-    }
+    if (!params) return res.status(406).json({ success: false, message: 'Request data missing!' });
+    if (!params.id) return res.status(406).json({ success: false, message: 'Event ID is required' });
 
     const existingEvent = await EventManager.getEventDetails({ _id: params.id });
-    if (!existingEvent) {
-      return res.status(404).json({ success: false, message: 'Event not found' });
-    }
+    if (!existingEvent) return res.status(404).json({ success: false, message: 'Event not found' });
 
     const payload = {
       name: params.name ?? existingEvent.name,
@@ -90,7 +88,9 @@ export const updateEvent = async (req, res) => {
       location: params.location ?? existingEvent.location,
       capacity: params.capacity ?? existingEvent.capacity,
       is_active: params.is_active ?? existingEvent.is_active,
-      registration_open: params.registration_open ?? existingEvent.registration_open
+      registration_open: params.registration_open ?? existingEvent.registration_open,
+      event_type: params.event_type ?? existingEvent.event_type,
+      source_language: params.source_language ?? existingEvent.source_language
     };
 
     await EventManager.updateEvent({ _id: params.id }, payload);
@@ -106,20 +106,12 @@ export const updateEvent = async (req, res) => {
  */
 export const deleteEvent = async (req, res) => {
   try {
-    if (!req.body.payload) {
-      return res.status(406).json({ success: false, message: 'Request data missing!' });
-    }
-
     const params = req.body.payload;
-
-    if (!params.id) {
-      return res.status(406).json({ success: false, message: 'Event ID is required' });
-    }
+    if (!params) return res.status(406).json({ success: false, message: 'Request data missing!' });
+    if (!params.id) return res.status(406).json({ success: false, message: 'Event ID is required' });
 
     const existingEvent = await EventManager.getEventDetails({ _id: params.id });
-    if (!existingEvent) {
-      return res.status(404).json({ success: false, message: 'Event not found' });
-    }
+    if (!existingEvent) return res.status(404).json({ success: false, message: 'Event not found' });
 
     await EventManager.deleteEvent({ _id: params.id });
 
@@ -134,8 +126,16 @@ export const deleteEvent = async (req, res) => {
  */
 export const getEventList = async (req, res) => {
   try {
-    const eventList = await EventManager.getEventList({ is_active: true });
-    return res.status(200).json({ success: true, eventList });
+    const events = await EventManager.getEventList({ is_active: true });
+
+    // Format dates
+    const formattedEvents = events.map(event => ({
+      ...event._doc,
+      start_date_formatted: formatDate(event.start_date),
+      end_date_formatted: formatDate(event.end_date)
+    }));
+
+    return res.status(200).json({ success: true, eventList: formattedEvents });
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
   }
@@ -146,22 +146,21 @@ export const getEventList = async (req, res) => {
  */
 export const getEventDetail = async (req, res) => {
   try {
-    if (!req.query.payload) {
-      return res.status(406).json({ success: false, message: 'Request data missing!' });
-    }
-
-    const params = JSON.parse(req.query.payload);
-
-    if (!params.id) {
-      return res.status(406).json({ success: false, message: 'Event ID is required' });
-    }
+    const params = req.query.payload ? JSON.parse(req.query.payload) : null;
+    if (!params) return res.status(406).json({ success: false, message: 'Request data missing!' });
+    if (!params.id) return res.status(406).json({ success: false, message: 'Event ID is required' });
 
     const event = await EventManager.getEventDetails({ _id: params.id });
-    if (!event) {
-      return res.status(404).json({ success: false, message: 'Event not found' });
-    }
+    if (!event) return res.status(404).json({ success: false, message: 'Event not found' });
 
-    return res.status(200).json({ success: true, data: event });
+    // Format dates
+    const formattedEvent = {
+      ...event._doc,
+      start_date_formatted: formatDate(event.start_date),
+      end_date_formatted: formatDate(event.end_date)
+    };
+
+    return res.status(200).json({ success: true, data: formattedEvent });
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
   }
@@ -173,7 +172,6 @@ export const getEventDetail = async (req, res) => {
 export const createEventsBulk = async (req, res) => {
   try {
     const { payload } = req.body;
-
     if (!payload || !Array.isArray(payload) || payload.length === 0) {
       return res.status(406).json({ success: false, message: 'Payload must be a non-empty array' });
     }
@@ -182,11 +180,11 @@ export const createEventsBulk = async (req, res) => {
 
     for (const params of payload) {
       if (!params.name || !params.start_date || !params.end_date || !params.start_time || !params.end_time || !params.capacity) {
-        return res.status(406).json({ success: false, message: 'Required fields missing in one or more events' });
+        return res.status(406).json({ success: false, message: `Required fields missing in event: ${params.name}` });
       }
 
-      const startDate = new Date(params.start_date);
-      const endDate = new Date(params.end_date);
+      let startDate = new Date(params.start_date);
+      let endDate = new Date(params.end_date);
 
       if (startDate > endDate) {
         return res.status(422).json({ success: false, message: `End date must be equal or after start date for event: ${params.name}` });
@@ -203,6 +201,9 @@ export const createEventsBulk = async (req, res) => {
 
       const eventId = await generateEventId(params.name, params.start_date);
 
+      startDate = formatDate(new Date(params.start_date));
+      endDate = formatDate(new Date(params.end_date));
+      
       eventsToCreate.push({
         event_id: eventId,
         name: params.name.trim(),
@@ -215,13 +216,15 @@ export const createEventsBulk = async (req, res) => {
         capacity: params.capacity,
         is_active: params.is_active ?? true,
         registration_open: params.registration_open ?? true,
-        created_by: params.created_by
+        created_by: params.created_by,
+        event_type: params.event_type || 'In-person',
+        source_language: params.source_language || 'English'
       });
     }
 
     await EventManager.bulkCreateEvent(eventsToCreate);
 
-    return res.status(200).json({ success: true, message: 'Events created successfully'});
+    return res.status(200).json({ success: true, message: 'Events created successfully' });
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
   }

@@ -37,7 +37,7 @@ app.use(
 );
 
 // Routes
-app.use('/api/user',  userRoutes);
+app.use('/api/users',  userRoutes);
 app.use('/api/event', eventRoute);
 // Health check
 app.get('/health', (req, res) => {
