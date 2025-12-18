@@ -1,4 +1,5 @@
 import UserSchema from '../models/userModel.js';
+import UserEventMapping from '../models/userEventMappingModel.js';
 
 // Create
 export const createUserProfile = async (payload) => {
@@ -53,6 +54,75 @@ export const deleteUser = async (searchQuery) => {
     return result;
   } catch (err) {
     console.error('Error in deleteUser:', err);
+    throw err;
+  }
+};
+
+
+  // ==================== CREATE USER EVENT MAPPING ====================
+export const createUserEventMapping = async (payload) => {
+  try {
+    const result = await UserEventMapping.create(payload);
+    return result.toObject();
+  } catch (err) {
+    console.error('Error in createUserEventMapping:', err);
+    throw err;
+  }
+};
+
+// ==================== READ SINGLE USER EVENT MAPPING ====================
+export const getUserEventMapping = async (payload) => {
+  try {
+    const result = await UserEventMapping.findOne(payload);
+    return result ? result.toObject() : null;
+  } catch (err) {
+    console.error('Error in getUserEventMapping:', err);
+    throw err;
+  }
+};
+
+// ==================== READ USER EVENT MAPPING LIST ====================
+export const getUserEventMappingList = async (payload = {}) => {
+  try {
+    const result = await UserEventMapping.find(payload);
+    return result.map((mapping) => mapping.toObject());
+  } catch (err) {
+    console.error('Error in getUserEventMappingList:', err);
+    throw err;
+  }
+};
+
+// ==================== COUNT USER EVENT MAPPINGS ====================
+export const countUserEventMappings = async (payload = {}) => {
+  try {
+    const count = await UserEventMapping.countDocuments(payload);
+    return count;
+  } catch (err) {
+    console.error('Error in countUserEventMappings:', err);
+    throw err;
+  }
+};
+
+// ==================== UPDATE USER EVENT MAPPING ====================
+export const updateUserEventMapping = async (searchQuery, updateQuery) => {
+  try {
+    const result = await UserEventMapping.updateOne(searchQuery, updateQuery, {
+      runValidators: true
+    });
+    return result;
+  } catch (err) {
+    console.error('Error in updateUserEventMapping:', err);
+    throw err;
+  }
+};
+
+// ==================== DELETE USER EVENT MAPPING ====================
+export const deleteUserEventMapping = async (searchQuery) => {
+  try {
+    const result = await UserEventMapping.deleteOne(searchQuery);
+    return result;
+  } catch (err) {
+    console.error('Error in deleteUserEventMapping:', err);
     throw err;
   }
 };
