@@ -11,16 +11,18 @@ const App = () => {
    const count = useSelector((state) => state.counter.value)
   const dispatch = useDispatch()
   return (
+          <div className='w-full container mx-auto'>
+
     <BrowserRouter>
-      <div className='w-full container'>
         <Navbar/>
-      </div>
       <Routes>
         <Route path="/" element={<Home />} />
         {/* <Route path="/create-event" element={<CreateEvent />} /> */}
         {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>
-    </BrowserRouter>   
+    </BrowserRouter>  
+          </div>
+ 
   )
 }
 

@@ -1,9 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+*{
+  font-family: "Inter", sans-serif;
+}
 
 .container{
     width:1440px;
     padding-inline: 16px;
+    margin-inline: auto;
+}
+.input-field {
+  width: 100%;
+  padding-left: 0.50rem;   /* px-2 */
+  padding-right: 0.75rem;
+  padding-top: 0.25rem;    /* py-1 */
+  padding-bottom: 0.25rem;
+  border-radius: 0.375rem; /* rounded */
+  border-width: 1px;       /* border-[2px] */
+  border-style: solid;
+  border-color: #d1d5db;   /* gray-300 */
+  outline: none;
+  font-size: 14px;
+}
+
+.input-field:focus {
+  border-color: #f97316;   /* orange-500 */
+  outline: none;
 }
