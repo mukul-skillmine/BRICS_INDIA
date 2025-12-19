@@ -1,10 +1,10 @@
+
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
 import connectDB from '../server/config/database.js';
 import userRoutes from './routers/userRouter.js';
-import eventRoute from './routers/eventRouter.js';
 
 dotenv.config();
 
