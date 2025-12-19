@@ -1,4 +1,5 @@
 import React from "react";
+import { createPortal } from "react-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -133,8 +134,8 @@ const CreateEvent = ({ setShowModal }) => {
                   type="radio"
                   value={option.id}
                   className="hidden"
-                  {...register("mode")}
-                  onChange={() => setValue("mode", option.id)}
+                  {...register("eventMode")}
+                  onChange={() => setValue("eventMode", option.id)}
                 />
                 {option.icon}
                 <div>
@@ -174,7 +175,9 @@ const CreateEvent = ({ setShowModal }) => {
               })}
             </select>
             {errors.eventType && (
-              <p className="text-red-500 text-xs">{errors.eventType.message}</p>
+              <p className="text-red-500 text-xs">
+                {errors.eventType.message}
+              </p>
             )}
           </div>
 
@@ -231,7 +234,9 @@ const CreateEvent = ({ setShowModal }) => {
               }
             </select>
             {errors.language && (
-              <p className="text-red-500 text-xs">{errors.language.message}</p>
+              <p className="text-red-500 text-xs">
+                {errors.language.message}
+              </p>
             )}
           </div>
           </div>
