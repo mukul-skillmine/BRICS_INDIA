@@ -3,6 +3,8 @@ import * as UserManager from '../managers/userManager.js';
 import * as UserEventMappingManager from '../managers/userManager.js';
 import * as EventManager from '../managers/eventManager.js';
 
+const allowedRoles = ['Super Admin', 'Admin', 'Visitor'];
+
 /**
  * ==================== CREATE USER ====================
  */
@@ -37,7 +39,10 @@ export const createUserProfile = async (req, res) => {
     // Validate address fields if country is India
     if (params.country === 'India') {
       if (!params.state || !params.city || !params.pincode || !params.full_address) {
-        return res.status(406).json({ success: false, message: 'State, city, pincode, and full address are required for India' });
+        return res.status(406).json({
+          success: false,
+          message: 'State, city, pincode, and full address are required for India'
+        });
       }
 
       // Validate pincode format for India
@@ -47,9 +52,23 @@ export const createUserProfile = async (req, res) => {
       }
     }
 
+    // Handle role
+    let role = 'Visitor'; // default role
+    if (params.role && allowedRoles.includes(params.role)) {
+      role = params.role;
+    }
+
     // Hash the password
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(params.password, salt);
+
+    let createdBy = null;
+    if (role !== 'Visitor') {
+      // Admin/Super Admin creation must specify 
+      if (params.created_by) {
+        createdBy = params.created_by;
+      }
+    }
 
     // Create user payload
     const payload = {
@@ -59,6 +78,8 @@ export const createUserProfile = async (req, res) => {
       password: passwordHash,
       salt,
       is_active: true,
+      role,
+      created_by: createdBy,
       country: params.country || '',
       state: params.state || '',
       city: params.city || '',
@@ -66,10 +87,20 @@ export const createUserProfile = async (req, res) => {
       full_address: params.full_address || ''
     };
 
-    // Create the user in the database
-    await UserManager.createUserProfile(payload);
+    const newUser = await UserManager.createUserProfile(payload);
 
-    res.status(200).json({ success: true, message: 'User Profile created successfully' });
+    res.status(201).json({
+      success: true,
+      message: 'User Profile created successfully',
+      data: {
+        _id: newUser._id,
+        first_name: newUser.first_name,
+        last_name: newUser.last_name,
+        email: newUser.email,
+        role: newUser.role,
+        created_by: newUser.created_by
+      }
+    });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
@@ -95,20 +126,27 @@ export const updateUserProfile = async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    // Check if country is India and validate address fields
+    // Validate address fields if country is India
     if (params.country === 'India') {
       if (!params.state || !params.city || !params.pincode || !params.full_address) {
-        return res.status(406).json({ success: false, message: 'State, city, pincode, and full address are required for India' });
+        return res.status(406).json({
+          success: false,
+          message: 'State, city, pincode, and full address are required for India'
+        });
       }
 
-      // Validate pincode format for India
       const pincodeRegex = /^[1-9]{1}[0-9]{5}$/;
       if (!pincodeRegex.test(params.pincode)) {
         return res.status(422).json({ success: false, message: 'Invalid pincode format' });
       }
     }
 
-    // Prepare payload to update
+    // Update role if provided
+    let role = existingUser.role;
+    if (params.role && allowedRoles.includes(params.role)) {
+      role = params.role;
+    }
+
     const payload = {
       first_name: params.first_name ?? existingUser.first_name,
       last_name: params.last_name ?? existingUser.last_name,
@@ -117,13 +155,24 @@ export const updateUserProfile = async (req, res) => {
       state: params.state ?? existingUser.state,
       city: params.city ?? existingUser.city,
       pincode: params.pincode ?? existingUser.pincode,
-      full_address: params.full_address ?? existingUser.full_address
+      full_address: params.full_address ?? existingUser.full_address,
+      role
     };
 
-    // Update user details
-    await UserManager.updateUserDetails({ _id: params.id }, payload);
+    const updatedUser = await UserManager.updateUserDetails({ _id: params.id }, payload);
 
-    res.status(200).json({ success: true, message: 'User Profile updated successfully' });
+    res.status(200).json({
+      success: true,
+      message: 'User Profile updated successfully',
+      data: {
+        _id: updatedUser._id,
+        first_name: updatedUser.first_name,
+        last_name: updatedUser.last_name,
+        email: updatedUser.email,
+        role: updatedUser.role,
+        created_by: updatedUser.created_by
+      }
+    });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
@@ -189,7 +238,17 @@ export const getUserDetail = async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    res.status(200).json({ success: true, data: user });
+    res.status(200).json({
+      success: true,
+      data: {
+        _id: user._id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        role: user.role,
+        created_by: user.created_by
+      }
+    });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
@@ -227,17 +286,24 @@ export const loginUser = async (req, res) => {
       return res.status(403).json({ success: false, message: 'Account is deactivated' });
     }
 
-    res.status(200).json({ success: true, message: 'Login successful' });
+    res.status(200).json({
+      success: true,
+      message: 'Login successful',
+      data: {
+        _id: user._id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        role: user.role
+      }
+    });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
 };
 
-
-// ==================== USER EVENT MAPPING CONTROLLERS ====================
-
 /**
- * ==================== REGISTER EVENT ====================
+ * ==================== USER EVENT MAPPING CONTROLLERS ====================
  */
 export const registerEvent = async (req, res) => {
   try {
@@ -280,17 +346,18 @@ export const registerEvent = async (req, res) => {
       status: 'registered'
     };
 
-    await UserEventMappingManager.createUserEventMapping(payload);
+    const registration = await UserEventMappingManager.createUserEventMapping(payload);
 
-    res.status(200).json({ success: true, message: 'Event registered successfully' });
+    res.status(200).json({
+      success: true,
+      message: 'Event registered successfully',
+      data: registration
+    });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
 };
 
-/**
- * ==================== CANCEL REGISTRATION ====================
- */
 export const cancelRegistration = async (req, res) => {
   try {
     if (!req.body.payload) {
@@ -314,9 +381,6 @@ export const cancelRegistration = async (req, res) => {
   }
 };
 
-/**
- * ==================== USER REGISTRATIONS ====================
- */
 export const getUserRegistrations = async (req, res) => {
   try {
     if (!req.query.payload) {
@@ -339,9 +403,6 @@ export const getUserRegistrations = async (req, res) => {
   }
 };
 
-/**
- * ==================== EVENT REGISTRATIONS ====================
- */
 export const getEventRegistrations = async (req, res) => {
   try {
     if (!req.query.payload) {

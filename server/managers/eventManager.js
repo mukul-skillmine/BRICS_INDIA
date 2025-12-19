@@ -56,3 +56,13 @@ export const deleteEvent = async (searchQuery) => {
     throw err;
   }
 };
+
+export const bulkCreateEvent = async (payload) => {
+  try {
+    await Event.insertMany(payload);
+    return true;
+  } catch (err) {
+    console.error('Error in bulkCreateEvent:', err);
+    throw err;
+  }
+};
