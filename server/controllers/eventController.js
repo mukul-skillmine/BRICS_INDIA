@@ -14,13 +14,15 @@ const formatDate = (date) => {
  */
 export const createEvent = async (req, res) => {
   try {
+    console.log(req.body)
     const params = req.body.payload;
+    console.log(params)
     if (!params) return res.status(406).json({ success: false, message: 'Request data missing!' });
 
     // Required fields validation
-    if (!params.name || !params.start_date || !params.end_date || !params.start_time || !params.end_time || !params.capacity) {
-      return res.status(406).json({ success: false, message: 'Required fields missing!' });
-    }
+    // if (!params.name || !params.start_date || !params.end_date || !params.start_time || !params.end_time || !params.capacity) {
+    //   return res.status(406).json({ success: false, message: 'Required fields missing!' });
+    // }
 
     if (new Date(params.start_date) > new Date(params.end_date)) {
       return res.status(422).json({ success: false, message: 'End date must be equal or after start date' });

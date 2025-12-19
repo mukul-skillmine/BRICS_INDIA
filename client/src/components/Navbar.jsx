@@ -1,25 +1,35 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import CreateEvent from '../pages/CreateEvent';
+import React, { useState } from "react";
+import {
+  AppBar,
+  Toolbar,
+  Button,
+  Box,
+  Typography,
+} from "@mui/material";
+import CreateEvent from "../pages/CreateEvent";
 
 const Navbar = () => {
-    const navigate = useNavigate();
-
-    const[showModal,setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   return (
-    <div>
-    <div className='flex  justify-end mt-8'>
-      <button className='bg-orange-400 px-4 py-1 rounded-md text-white hover:bg-orange-600 transition-all duration-200 ease-in-out'
-      onClick={()=>setShowModal(prev => !prev)}
-      >Create Event</button>
+    <>
+      <AppBar position="static" sx={{ bgcolor: "#0b0f5c" }}>
+        <Toolbar sx={{ justifyContent: "space-between" }}>
+          <Typography variant="h6">Bric</Typography>
 
-    </div>
-    {
-        showModal && <CreateEvent setShowModal={setShowModal}/>
-    }
-    </div>
-  )
-}
+          <Button
+            variant="contained"
+            sx={{ bgcolor: "#f97316" }}
+            onClick={() => setShowModal(true)}
+          >
+            Create Event
+          </Button>
+        </Toolbar>
+      </AppBar>
 
-export default Navbar
+      {showModal && <CreateEvent setShowModal={setShowModal} />}
+    </>
+  );
+};
+
+export default Navbar;
