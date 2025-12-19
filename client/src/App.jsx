@@ -5,14 +5,17 @@ import Events from "./pages/Events";
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/events" element={<Events />} />
-        </Routes>
-      </Layout>
-    </BrowserRouter>
+    <div className='w-full container mx-auto'>
+
+      <BrowserRouter>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/events" element={<Events />} />
+          </Routes>
+        </Layout>
+      </BrowserRouter>
+    </div>
   );
 };
 

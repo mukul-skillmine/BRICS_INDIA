@@ -18,7 +18,7 @@ const eventSchema = new mongoose.Schema(
 
     description: {
       type: String,
-      trim: true,
+      trim: false,
       maxlength: [2000, 'Description cannot exceed 2000 characters']
     },
 
@@ -44,18 +44,18 @@ const eventSchema = new mongoose.Schema(
       match: [/^([0-1]\d|2[0-3]):([0-5]\d)$/, 'End time must be in HH:mm format']
     },
 
-    location: {
-      type: String,
-      required: [true, 'Event location is required'],
-      trim: true,
-      minlength: [2, 'Location must be at least 2 characters'],
-      maxlength: [255, 'Location cannot exceed 255 characters']
-    },
+    // location: {
+    //   type: String,
+    //   required: [false, 'Event location is required'],
+    //   trim: true,
+    //   minlength: [2, 'Location must be at least 2 characters'],
+    //   maxlength: [255, 'Location cannot exceed 255 characters']
+    // },
 
     event_type: {
       type: String,
       enum: ['In-person', 'Virtual', 'Hybrid'],
-      required: [true, 'Event type is required'],
+      required: [false, 'Event type is required'],
       default: 'In-person'
     },
 
@@ -68,7 +68,7 @@ const eventSchema = new mongoose.Schema(
 
     capacity: {
       type: Number,
-      required: [true, 'Event capacity is required'],
+      required: [false, 'Event capacity is required'],
       min: [1, 'Capacity must be at least 1']
     },
 
@@ -85,7 +85,7 @@ const eventSchema = new mongoose.Schema(
     created_by: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: [true, 'Event creator is required']
+      required: [false, 'Event creator is required']
     }
   },
   {
