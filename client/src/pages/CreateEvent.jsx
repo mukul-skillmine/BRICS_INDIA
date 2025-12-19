@@ -264,8 +264,7 @@ const CreateEvent = ({ setShowModal }) => {
           </div>
         </form>
       </div>
-    </div>,
-    modalRoot
+    </div>
   );
 };
 
