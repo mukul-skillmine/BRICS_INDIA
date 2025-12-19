@@ -5,7 +5,7 @@ import Events from "./pages/Events";
 
 const App = () => {
   return (
-    <div className='w-full container mx-auto'>
+    <div className='w-full'>
 
       <BrowserRouter>
         <Layout>
