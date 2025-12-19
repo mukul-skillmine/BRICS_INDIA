@@ -3,12 +3,12 @@ import { cancelRegistration, createUserProfile, deleteUserProfile, getEventRegis
 
 const router = express.Router();
 
-router.post('/create', createUserProfile);
-router.put('/update', updateUserProfile);
-router.get('/list', getUserList);
-router.get('/details', getUserDetail);
-router.post('/delete', deleteUserProfile);
-router.post('/login', loginUser);
+router.post('/create',                      createUserProfile);
+router.put('/update',                       updateUserProfile);
+router.get('/list',                         getUserList);
+router.get('/details',                      getUserDetail);
+router.post('/delete',                      deleteUserProfile);
+router.post('/login',                       loginUser);
 
 // User Event Mapping Routes
 
