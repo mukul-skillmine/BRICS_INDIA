@@ -24,10 +24,10 @@ export const sendOTP = async (req, res) => {
       otp,
     });
 
-    res.json({ message: "OTP sent successfully" });
+    res.json({ success: true, message: "OTP sent successfully" });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ sucess: false, message: "Server error" });
   }
 };
 
@@ -36,22 +36,23 @@ export const verifyOTP = async (req, res) => {
 
   try {
     const user = await Otp.findOne({ email });
-    if (!user) return res.status(400).json({ message: "User not found" });
+    if (!user)
+      return res.status(400).json({ sucess: false, message: "User not found" });
 
     if (user.otp !== otp)
-      return res.status(400).json({ message: "Invalid OTP" });
+      return res.status(400).json({ sucess: false, message: "Invalid OTP" });
 
     if (user.otpExpires < new Date())
-      return res.status(400).json({ message: "OTP expired" });
+      return res.status(400).json({ sucess: false, message: "OTP expired" });
 
     user.isVerified = true;
     user.otp = null;
     user.otpExpires = null;
     await user.save();
 
-    res.json({ message: "Email verified successfully" });
+    res.json({ success: true, message: "Email verified successfully" });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
