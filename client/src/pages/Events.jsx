@@ -19,7 +19,7 @@ const Events = () => {
           startIcon={<AddIcon />}
           onClick={() => setShowModal(true)}
           sx={{
-            bgcolor: "#1976d2",
+            bgcolor: "#fa7516",
             textTransform: "none",
             fontWeight: 500,
           }}

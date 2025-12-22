@@ -24,7 +24,7 @@ const Sidebar = () => {
           width: DRAWER_WIDTH,
           top: `${HEADER_HEIGHT}px`,
           height: `calc(100% - ${HEADER_HEIGHT}px)`,
-          borderRight: "1px solid #E5E7EB",
+          borderRight: "1px solid #fa7516",
           display: "flex",
           alignItems: "center",
         },
@@ -72,7 +72,7 @@ const navItemStyles = {
   mb: 1,
   "&.active": {
     bgcolor: "#EEF2FF",
-    color: "#4F6BED",
+    color: "#fa7516",
     "&::before": {
       content: '""',
       position: "absolute",
@@ -80,7 +80,7 @@ const navItemStyles = {
       top: 8,
       bottom: 8,
       width: 4,
-      bgcolor: "#4F6BED",
+      bgcolor: "#fa7516",
       borderRadius: 4,
     },
   },

@@ -13,17 +13,22 @@ const Navbar = () => {
 
   return (
     <>
-      <AppBar position="static" sx={{ bgcolor: "#0b0f5c" }}>
+      <AppBar position="static" sx={{ bgcolor: "#fa7516" }}>
         <Toolbar sx={{ justifyContent: "space-between" }}>
-          <Typography variant="h6">Bric</Typography>
+          <Typography variant="h6">BRICS</Typography>
 
-          <Button
-            variant="contained"
-            sx={{ bgcolor: "#f97316" }}
-            onClick={() => setShowModal(true)}
-          >
-            Create Event
-          </Button>
+         <Button
+  variant=""
+  sx={{
+    bgcolor: "#fa7516",
+    "&:hover": {
+      bgcolor: "#e56712", // slightly darker for hover
+    },
+  }}
+  onClick={() => setShowModal(true)}
+>
+  Create Event
+</Button>
         </Toolbar>
       </AppBar>
 

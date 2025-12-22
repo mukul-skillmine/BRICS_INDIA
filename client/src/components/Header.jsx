@@ -12,12 +12,15 @@ const Header = () => {
     <AppBar
       position="static"
       elevation={0}
-      sx={{ bgcolor: "#0B145C", height: 64 }}
-    >
+sx={{
+  height: 64,
+  background: "linear-gradient(180deg, #ff8a3d 80%, #fa7516 100%)",
+  borderBottom: "4px solid #e56712",
+}}    >
       <Toolbar sx={{ minHeight: 64, px: 3 }}>
         {/* LEFT */}
         <Box display="flex" alignItems="center" gap={1.5}>
-          <Typography fontWeight={600}>Bric</Typography>
+          <Typography fontWeight={600}>BRICS</Typography>
           <Box
             sx={{
               bgcolor: "#E8ECFF",
@@ -25,6 +28,7 @@ const Header = () => {
               fontSize: 12,
               px: 1,
               py: 0.3,
+              mr:1,
               borderRadius: 1,
               fontWeight: 600,
             }}
@@ -33,8 +37,8 @@ const Header = () => {
           </Box>
         </Box>
 
-        {/* CENTER */}
-        <Box flex={1} display="flex" justifyContent="center" gap={2}>
+        {/* start */}
+        <Box flex={1} display="flex" justifyContent="start" gap={2}>
           <Typography fontSize={13} opacity={0.9}>
             Sat Jan 17, 2026 - 08:00 AM (IST)
           </Typography>
@@ -54,7 +58,7 @@ const Header = () => {
           <Button
             variant="contained"
             sx={{
-              bgcolor: "#4F6BED",
+              bgcolor: "#e56712",
               textTransform: "none",
               fontWeight: 500,
             }}

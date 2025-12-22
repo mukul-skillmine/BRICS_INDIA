@@ -106,8 +106,9 @@ const CreateEvent = ({ setShowModal }) => {
   ];
 
   return (
-    <div className="container w-full h-screen bg-gray-500/60 fixed inset-0 flex items-center justify-center">
-      <div className="w-4/5 bg-white rounded-xl">
+    <div className="w-full h-screen bg-gray-500/60 fixed inset-0 flex items-center justify-center">
+      <div className="container">
+      <div className="w-4/5 mx-auto  bg-white rounded-xl">
         <div className="flex justify-between px-8 py-2 items-center  border-b-[1px]">
           <p className="text-lg font-semibold">Create Event</p>
           <IoCloseOutline
@@ -134,8 +135,7 @@ const CreateEvent = ({ setShowModal }) => {
                   type="radio"
                   value={option.id}
                   className="hidden"
-                  {...register("eventMode")}
-                  onChange={() => setValue("eventMode", option.id)}
+                  {...register("mode")}
                 />
                 {option.icon}
                 <div>
@@ -264,6 +264,7 @@ const CreateEvent = ({ setShowModal }) => {
           </div>
         </form>
       </div>
+       </div>
     </div>
   );
 };
