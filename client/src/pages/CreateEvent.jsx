@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { createPortal } from "react-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,6 +7,7 @@ import { IoCloseOutline } from "react-icons/io5";
 import { FaUser, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import calender from '../assets/images/calendar.svg'
 import axios from 'axios'
+import { toast } from "react-toastify";
 
 const CreateEvent = ({ setShowModal }) => {
   const createEventSchema = z.object({
@@ -32,9 +33,12 @@ const CreateEvent = ({ setShowModal }) => {
     },
   });
 
+  const[loading,setLoading] = useState(false);
+
   const selected = watch("mode");
   console.log(`${import.meta.env.VITE_BASE_URL}`)
   const onSubmit = async(data) => {
+    setLoading(true);
     try{
        console.log("✅ FORM DATA:", data);
 
@@ -55,9 +59,14 @@ const CreateEvent = ({ setShowModal }) => {
         };
         const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/event/create`,{payload :mydata}); 
         console.log(response)
-
+        setShowModal(false);
+        setLoading(false);
+        toast.success("Event Create Successfully!");
     }catch(error){
         console.log(error.message)
+    }
+    finally{
+      setLoading(false)
     }
   };
 
@@ -105,6 +114,7 @@ const CreateEvent = ({ setShowModal }) => {
     { value: "zulu", label: "Zulu (South Africa)" },
   ];
 
+
   return (
     <div className="container w-full h-screen bg-gray-500/60 fixed inset-0 flex items-center justify-center">
       <div className="w-4/5 bg-white rounded-xl">
@@ -134,8 +144,7 @@ const CreateEvent = ({ setShowModal }) => {
                   type="radio"
                   value={option.id}
                   className="hidden"
-                  {...register("eventMode")}
-                  onChange={() => setValue("eventMode", option.id)}
+                  {...register("mode")}
                 />
                 {option.icon}
                 <div>
@@ -253,13 +262,15 @@ const CreateEvent = ({ setShowModal }) => {
           <div className="flex justify-end bg-gray-100 py-2 gap-2 pr-8 rounded-bl-md rounded-br-md border-t">
 
           <button className="text-sm bg-white border-[1px] border-gray-400 rounded-md px-4 py-1 hover:border-gray-600 transition-all duration-200 ease-in-out"
-            onClick={() => setShowModal(false)}
+           onClick={() => {
+              setShowModal(false)}}
           >Cancel</button>
           <button
             type="submit"
             className="text-sm bg-orange-500 hover:bg-orange-600 transition-all duration-300 ease-in-out text-white px-4 py-1 rounded-md float-right"
-          >
-            Next
+            disabled={loading}
+          > {loading ?"Loading..." : "Next"}
+            
           </button>
           </div>
         </form>
