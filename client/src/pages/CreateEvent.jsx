@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { IoCloseOutline } from "react-icons/io5";
 import { FaUser, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
+import { MdLanguage } from "react-icons/md";
 import calender from '../assets/images/calendar.svg'
 import axios from 'axios'
 import { toast } from "react-toastify";
@@ -125,6 +126,10 @@ const CreateEvent = ({ setShowModal }) => {
             onClick={() => setShowModal(false)}
             className="text-xl cursor-pointer hover:text-2xl transition-all duration-200 ease-out "
           />
+        </div>
+
+        <div>
+          <input type="text" placeholder="Search" />
         </div>
 
         <form className="" onSubmit={handleSubmit(onSubmit)}>
