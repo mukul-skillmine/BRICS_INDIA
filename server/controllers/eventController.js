@@ -137,7 +137,7 @@ export const getEventList = async (req, res) => {
       end_date_formatted: formatDate(event.end_date)
     }));
 
-    return res.status(200).json({ success: true, eventList: formattedEvents });
+    return res.status(200).json({ success: true, eventList: events });
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
   }

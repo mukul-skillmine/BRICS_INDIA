@@ -116,7 +116,7 @@ const CreateEvent = ({ setShowModal }) => {
 
 
   return (
-    <div className="w-full h-screen bg-gray-500/60 fixed inset-0 flex items-center justify-center">
+    <div className=" z-9999 w-full h-screen bg-gray-500/60 fixed inset-0 flex items-center justify-center">
       <div className="container">
       <div className="w-4/5 mx-auto  bg-white rounded-xl">
         <div className="flex justify-between px-8 py-2 items-center  border-b-[1px]">
@@ -131,7 +131,7 @@ const CreateEvent = ({ setShowModal }) => {
             <div className="flex">
             <div className="p-8 w-[75%]">
           {/* EVENT MODE */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid lg:grid-cols-3 gap-4 md:grid-cols-2 sm:grid-cols-1">
             {options.map((option) => (
               <label
                 key={option.id}
@@ -192,9 +192,9 @@ const CreateEvent = ({ setShowModal }) => {
           </div>
 
           {/* DATE & TIME */}
-            <div className="flex gap-4 justify-between items-start mt-4">
+            <div className="grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-4  justify-between items-start mt-4 w-full">
 
-            <div className="flex flex-col w-1/4">
+            <div className="flex flex-col w-full ">
             <label htmlFor="start-date" className="text-xs text-gray-800"> Start Date<span className="text-red-500 font-bold">*</span> </label>
             <input type="date" {...register("startDate")} className="input-field" />
              {errors.startDate && (
@@ -202,7 +202,7 @@ const CreateEvent = ({ setShowModal }) => {
             )}
             </div>
 
-            <div className="flex flex-col w-1/4">
+            <div className="flex flex-col  w-full">
             <label htmlFor="start-time" className="text-xs text-gray-800"> Start Time<span className="text-red-500 font-bold">*</span> </label>
             <input type="time" {...register("startTime")} className="input-field" />
              {errors.startTime && (
@@ -210,7 +210,7 @@ const CreateEvent = ({ setShowModal }) => {
             )}
             </div>
 
-            <div className="flex flex-col w-1/4">
+            <div className="flex flex-col w-full">
             <label htmlFor="end-date" className="text-xs text-gray-800"> End Date<span className="text-red-500 font-bold">*</span> </label>
             <input type="date" {...register("endDate")} className="input-field" />
              {errors.endDate && (
@@ -219,7 +219,7 @@ const CreateEvent = ({ setShowModal }) => {
             </div>
 
 
-            <div className="flex flex-col w-1/4">
+            <div className="flex flex-col w-full">
             <label htmlFor="end-time" className="text-xs text-gray-800"> End Time<span className="text-red-500 font-bold">*</span> </label>
             <input type="time" {...register("endTime")} className="input-field" />
              {errors.endTime && (

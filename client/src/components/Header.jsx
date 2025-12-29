@@ -10,14 +10,14 @@ import {
 const Header = () => {
   return (
     <AppBar
-      position="static"
+      position="fixed"
       elevation={0}
 sx={{
   height: 64,
   background: "linear-gradient(180deg, #ff8a3d 80%, #fa7516 100%)",
   borderBottom: "4px solid #e56712",
 }}    >
-      <Toolbar sx={{ minHeight: 64, px: 3 }}>
+      <Toolbar sx={{ minHeight: 64, px: 3,}} >
         {/* LEFT */}
         <Box display="flex" alignItems="center" gap={1.5}>
           <Typography fontWeight={600}>BRICS</Typography>
