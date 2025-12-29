@@ -1,130 +1,75 @@
 import React, { useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { createPortal } from "react-dom";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { IoCloseOutline } from "react-icons/io5";
-import { MdBlock } from "react-icons/md";
 import { FaUser, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
-import calender from "../assets/images/calendar.svg";
-import axios from "axios";
+import calender from '../assets/images/calendar.svg'
+import axios from 'axios'
 import { toast } from "react-toastify";
-import OtpModal from "../components/OtpModal";
 
 const CreateEvent = ({ setShowModal }) => {
-  /* -------------------- LOCAL STATE -------------------- */
-  const [showOtpModal, setShowOtpModal] = useState(false);
-  const [emailVerified, setEmailVerified] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [sendingOtp, setSendingOtp] = useState(false);
-
-  /* -------------------- VALIDATION SCHEMA -------------------- */
   const createEventSchema = z.object({
-    mode: z.enum(["In-person", "Virtual", "Hybrid"]),
+    mode: z.enum(['In-person', 'Virtual', 'Hybrid']),
     eventName: z.string().min(3, "Event name is required"),
     eventType: z.string().min(1, "Event type is required"),
-    email: z
-      .string()
-      .min(1, "Email is required")
-      .email("Enter a valid email address"),
     startDate: z.string().min(1, "Start date required"),
     startTime: z.string().min(1, "Start time required"),
     endDate: z.string().min(1, "End date required"),
     endTime: z.string().min(1, "End time required"),
     language: z.string().min(1, "Language is required"),
   });
-
-  /* -------------------- FORM -------------------- */
   const {
     register,
     handleSubmit,
+    setValue,
     watch,
-    control,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(createEventSchema),
-    mode: "onChange",
     defaultValues: {
       mode: "Virtual",
     },
   });
 
-  const emailValue = useWatch({ control, name: "email" });
-  const selectedMode = watch("mode");
+  const[loading,setLoading] = useState(false);
 
-  /* -------------------- EMAIL OTP FLOW -------------------- */
-  const handleVerifyEmail = async () => {
-    const email = watch("email");
-    if (!email) return;
-
-    try {
-      setSendingOtp(true);
-
-      await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/api/otp/send`,
-        { email }
-      );
-
-      toast.success("OTP sent successfully");
-
-      setTimeout(() => {
-        setShowOtpModal(true);
-        setSendingOtp(false);
-      }, 400);
-    } catch (err) {
-      setSendingOtp(false);
-      toast.error(err.response?.data?.message || "Failed to send OTP");
-    }
-  };
-
-  const handleVerifyOtp = async (otp) => {
-    try {
-      await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/api/otp/verify`,
-        { email: watch("email"), otp }
-      );
-
-      toast.success("Email verified successfully");
-      setEmailVerified(true);
-      setShowOtpModal(false);
-    } catch (err) {
-      toast.error("Invalid OTP");
-    }
-  };
-
-  /* -------------------- SUBMIT -------------------- */
-  const onSubmit = async (data) => {
-    if (!emailVerified) {
-      toast.error("Please verify your email first");
-      return;
-    }
-
+  const selected = watch("mode");
+  console.log(`${import.meta.env.VITE_BASE_URL}`)
+  const onSubmit = async(data) => {
     setLoading(true);
-    try {
-      const payload = {
-        name: data.eventName,
-        start_date: data.startDate,
-        end_date: data.endDate,
-        start_time: data.startTime,
-        end_time: data.endTime,
-        event_type: data.mode,
-        source_language: data.language,
-      };
+    try{
+       console.log("✅ FORM DATA:", data);
 
-      await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/api/event/create`,
-        { payload }
-      );
-
-      toast.success("Event created successfully!");
-      setShowModal(false);
-    } catch (err) {
-      toast.error("Failed to create event");
-    } finally {
-      setLoading(false);
+        let mydata = {
+          name: data.eventName,
+          // description: params.description || '',
+          start_date: data.startDate,
+          end_date: data.endDate,
+          start_time: data.startTime,
+          end_time: data.endTime,
+          // location: params.location || '',
+          // capacity: params.capacity,
+          // is_active: params.is_active ?? true,
+          // registration_open: params.registration_open ?? true,
+          // created_by: params.created_by,
+          event_type: data.mode || 'In-person',
+          source_language: data.language || 'English'
+        };
+        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/event/create`,{payload :mydata}); 
+        console.log(response)
+        setShowModal(false);
+        setLoading(false);
+        toast.success("Event Create Successfully!");
+    }catch(error){
+        console.log(error.message)
+    }
+    finally{
+      setLoading(false)
     }
   };
 
-  /* -------------------- STATIC DATA -------------------- */
   const options = [
     {
       id: "Virtual",
@@ -159,200 +104,182 @@ const CreateEvent = ({ setShowModal }) => {
     { value: "english", label: "English (India)" },
     { value: "bengali", label: "Bengali (India)" },
     { value: "marathi", label: "Marathi (India)" },
+    { value: "telugu", label: "Telugu (India)" },
+    { value: "tamil", label: "Tamil (India)" },
+    { value: "gujarati", label: "Gujarati (India)" },
+    { value: "portuguese", label: "Portuguese (Brazil)" },
+    { value: "russian", label: "Russian (Russia)" },
+    { value: "chinese", label: "Chinese (China)" },
+    { value: "arabic", label: "Arabic (South Africa)" },
+    { value: "zulu", label: "Zulu (South Africa)" },
   ];
 
-  const isEmailInvalid = !emailValue || !!errors.email;
 
-  /* -------------------- UI -------------------- */
   return (
-    <>
-      <div className="w-full h-screen bg-gray-500/60 fixed inset-0 flex items-center justify-center">
-        <div className="w-4/5 bg-white rounded-xl">
-          {/* HEADER */}
-          <div className="flex justify-between px-8 py-2 border-b">
-            <p className="text-lg font-semibold">Create Event</p>
-            <IoCloseOutline
-              onClick={() => setShowModal(false)}
-              className="text-xl cursor-pointer"
-            />
-          </div>
+    <div className=" z-9999 w-full h-screen bg-gray-500/60 fixed inset-0 flex items-center justify-center ">
+      <div className="container">
+      <div className="w-4/5 mx-auto  bg-white rounded-xl h-2/3 overflow-y-auto">
+        <div className="flex justify-between px-8 py-2 items-center  border-b-[1px]">
+          <p className="text-lg font-semibold">Create Event</p>
+          <IoCloseOutline
+            onClick={() => setShowModal(false)}
+            className="text-xl cursor-pointer hover:text-2xl transition-all duration-200 ease-out "
+          />
+        </div>
 
-          <form onSubmit={handleSubmit(onSubmit)}>
+        <form className="" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex">
-              {/* LEFT */}
-              <div className="p-8 w-[75%]">
-                {/* EVENT MODE */}
-                <div className="grid grid-cols-3 gap-4">
-                  {options.map((option) => (
-                    <label
-                      key={option.id}
-                      className={`border p-4 rounded cursor-pointer flex items-center gap-4 ${
-                        selectedMode === option.id
-                          ? "border-orange-600 bg-orange-50"
-                          : "border-gray-300"
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        value={option.id}
-                        className="hidden"
-                        {...register("mode")}
-                      />
-                      {option.icon}
-                      <div>
-                        <p className="font-medium">{option.title}</p>
-                        <p className="text-sm">{option.description}</p>
-                      </div>
-                    </label>
-                  ))}
-                </div>
-
-                {/* EVENT NAME */}
-                <div className="mt-4">
-                  <label className="text-xs">Event Name *</label>
-                  <input {...register("eventName")} className="input-field" />
-                  {errors.eventName && (
-                    <p className="text-red-500 text-xs">
-                      {errors.eventName.message}
-                    </p>
-                  )}
-                </div>
-
-                {/* EVENT TYPE */}
-                <div className="mt-4">
-                  <label className="text-xs">Event Type *</label>
-                  <select {...register("eventType")} className="input-field">
-                    <option value="">Select event</option>
-                    {eventOptions.map((e) => (
-                      <option key={e.value} value={e.value}>
-                        {e.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* EMAIL */}
-                <div className="mt-4">
-                  <label className="text-xs">Email *</label>
-                  <div className="relative">
-                    <input
-                      type="email"
-                      placeholder="Provide Email ID"
-                      disabled={emailVerified}
-                      {...register("email")}
-                      className={`input-field pr-20 ${
-                        emailVerified ? "bg-gray-100" : ""
-                      }`}
-                    />
-
-                    <button
-                      type="button"
-                      disabled={emailVerified || isEmailInvalid || sendingOtp}
-                      onClick={handleVerifyEmail}
-                      className={`absolute right-2 top-1/2 -translate-y-1/2
-                        flex items-center gap-1 text-sm
-                        ${
-                          sendingOtp
-                            ? "text-gray-400 cursor-wait"
-                            : emailVerified
-                            ? "text-green-600"
-                            : isEmailInvalid
-                            ? "text-gray-400 cursor-not-allowed"
-                            : "text-gray-600 hover:text-gray-700"
-                        }`}
-                    >
-                      {sendingOtp ? (
-                        "Sending..."
-                      ) : emailVerified ? (
-                        "Verified ✓"
-                      ) : isEmailInvalid ? (
-                        <>
-                          
-                          Verify
-                        </>
-                      ) : (
-                        "Verify"
-                      )}
-                    </button>
-                  </div>
-                </div>
-
-                {/* DATE & TIME */}
-                <div className="flex gap-4 mt-4">
-                  {["startDate", "startTime", "endDate", "endTime"].map(
-                    (field, idx) => (
-                      <div className="w-1/4" key={idx}>
-                        <input
-                          type={field.includes("Time") ? "time" : "date"}
-                          {...register(field)}
-                          className="input-field"
-                        />
-                        {errors[field] && (
-                          <p className="text-red-500 text-xs">
-                            {errors[field].message}
-                          </p>
-                        )}
-                      </div>
-                    )
-                  )}
-                </div>
-
-                {/* LANGUAGE */}
-                <div className="mt-4">
-                  <label className="text-xs">Language *</label>
-                  <select {...register("language")} className="input-field">
-                    <option value="">Select language</option>
-                    {bricsLanguages.map((l) => (
-                      <option key={l.value} value={l.value}>
-                        {l.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* RIGHT */}
-              <div className="w-[25%] bg-gray-100 p-6">
-                <img src={calender} className="mx-auto mt-10" />
-                <p className="text-sm text-gray-600 mt-4">
-                  Fill basic details now. Add more info later.
-                </p>
-              </div>
-            </div>
-
-            {/* FOOTER */}
-            <div className="flex justify-end p-4 border-t">
-              <button
-                type="submit"
-                disabled={!emailVerified || loading}
-                className="bg-orange-500 text-white px-4 py-2 rounded"
+            <div className="p-8 w-[75%]">
+          {/* EVENT MODE */}
+          <div className="grid lg:grid-cols-3 gap-4 md:grid-cols-2 sm:grid-cols-1">
+            {options.map((option) => (
+              <label
+                key={option.id}
+                className={`border p-4 rounded cursor-pointer flex items-center gap-4 ${
+                  selected === option.id
+                    ? "border-orange-600 bg-orange-50"
+                    : "border-gray-300"
+                }`}
               >
-                {loading ? "Loading..." : "Next"}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      {/* LOADER */}
-      {sendingOtp && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white px-6 py-4 rounded-xl flex items-center gap-3">
-            <div className="w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
-            <span className="text-sm">Sending OTP...</span>
+                <input
+                  type="radio"
+                  value={option.id}
+                  className="hidden"
+                  {...register("mode")}
+                />
+                {option.icon}
+                <div>
+                  <p className="text-md font-medium">{option.title}</p>
+                  <p className="text-sm">{option.description}</p>
+                </div>
+              </label>
+            ))}
           </div>
-        </div>
-      )}
 
-      {/* OTP MODAL */}
-      {showOtpModal && (
-        <OtpModal
-          email={watch("email")}
-          onClose={() => setShowOtpModal(false)}
-          onVerify={handleVerifyOtp}
-        />
-      )}
-    </>
+          {/* EVENT NAME */}
+          <div className="mt-4">
+            <label className="text-xs text-gray-800">Event Name <span className="text-red-500 font-bold">*</span></label>
+            <input
+              {...register("eventName")}
+              className="input-field"
+              placeholder="Enter event name"
+            />
+            {errors.eventName && (
+              <p className="text-red-500 text-xs">{errors.eventName.message}</p>
+            )}
+          </div>
+
+          {/* EVENT TYPE */}
+          <div className="mt-4">
+            <label className="text-xs text-gray-800">Event Type <span className="text-red-500 font-bold">*</span></label>
+            <select
+              {...register("eventType")}
+              className="input-field"
+            >
+              <option value="" className="input-field">Select an event</option>
+              {eventOptions.map((event) => {
+                return (
+                  <option value={event.value} key={event.value}>
+                    {event.label}
+                  </option>
+                );
+              })}
+            </select>
+            {errors.eventType && (
+              <p className="text-red-500 text-xs">
+                {errors.eventType.message}
+              </p>
+            )}
+          </div>
+
+          {/* DATE & TIME */}
+            <div className="grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-4  justify-between items-start mt-4 w-full">
+
+            <div className="flex flex-col w-full ">
+            <label htmlFor="start-date" className="text-xs text-gray-800"> Start Date<span className="text-red-500 font-bold">*</span> </label>
+            <input type="date" {...register("startDate")} className="input-field" />
+             {errors.startDate && (
+              <p className="text-red-500 text-xs">{errors.startDate.message}</p>
+            )}
+            </div>
+
+            <div className="flex flex-col  w-full">
+            <label htmlFor="start-time" className="text-xs text-gray-800"> Start Time<span className="text-red-500 font-bold">*</span> </label>
+            <input type="time" {...register("startTime")} className="input-field" />
+             {errors.startTime && (
+              <p className="text-red-500 text-xs">{errors.startTime.message}</p>
+            )}
+            </div>
+
+            <div className="flex flex-col w-full">
+            <label htmlFor="end-date" className="text-xs text-gray-800"> End Date<span className="text-red-500 font-bold">*</span> </label>
+            <input type="date" {...register("endDate")} className="input-field" />
+             {errors.endDate && (
+              <p className="text-red-500 text-xs">{errors.endDate.message}</p>
+            )}
+            </div>
+
+
+            <div className="flex flex-col w-full">
+            <label htmlFor="end-time" className="text-xs text-gray-800"> End Time<span className="text-red-500 font-bold">*</span> </label>
+            <input type="time" {...register("endTime")} className="input-field" />
+             {errors.endTime && (
+              <p className="text-red-500 text-xs">{errors.endTime.message}</p>
+            )}
+            </div>
+          </div>
+
+          {/* LANGUAGE */}
+          <div className="mt-4">
+            <label className="text-xs text-gray-800">Language <span className="text-red-500 font-bold">*</span></label>
+            <select
+              {...register("language")}
+              className="input-field"
+            >
+              <option value="">Choose a language</option>
+
+              {
+                bricsLanguages.map((language)=>(
+                    <option value={language.value} key={language.value}>{language.label}</option>
+                ))
+              }
+            </select>
+            {errors.language && (
+              <p className="text-red-500 text-xs">
+                {errors.language.message}
+              </p>
+            )}
+          </div>
+          </div>
+
+          <div className="w-[25%] min-h-full bg-gray-100 border-[1px] border-l px-6 items-center">
+
+            <img src={calender} alt="calender" className="mt-16 mx-auto" />
+            <h3 className="text-xl font-medium py-2">Create
+ Your Event</h3>
+            <p className="text-xs text-gray-600">Start creating your event by providing the basic details now and fill in what your event is all about later</p>
+          </div>
+          </div>
+
+          {/* NEXT BUTTON */}
+          <div className="flex justify-end bg-gray-100 py-2 gap-2 pr-8 rounded-bl-md rounded-br-md border-t">
+
+          <button className="text-sm bg-white border-[1px] border-gray-400 rounded-md px-4 py-1 hover:border-gray-600 transition-all duration-200 ease-in-out"
+           onClick={() => {
+              setShowModal(false)}}
+          >Cancel</button>
+          <button
+            type="submit"
+            className="text-sm bg-orange-500 hover:bg-orange-600 transition-all duration-300 ease-in-out text-white px-4 py-1 rounded-md float-right"
+            disabled={loading}
+          > {loading ?"Loading..." : "Next"}
+
+          </button>
+          </div>
+        </form>
+      </div>
+       </div>
+    </div>
   );
 };
 

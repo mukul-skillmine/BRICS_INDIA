@@ -60,7 +60,7 @@ const Events = () => {
 
       {/* EMPTY STATE */}
  {loading && <div className="w-full flex h-screen justify-center items-center">
-          <p>Loading...</p>
+          <span className="loader mb-16"></span>
         </div> }
       <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4">
        
