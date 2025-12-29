@@ -128,10 +128,6 @@ const CreateEvent = ({ setShowModal }) => {
           />
         </div>
 
-        <div>
-          <input type="text" placeholder="Search" />
-        </div>
-
         <form className="" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex">
             <div className="p-8 w-[75%]">
