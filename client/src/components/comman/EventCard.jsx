@@ -8,48 +8,18 @@ const modeColors = {
 
 const EventCard = ({ cardData }) => {
   return (
-    <div className="h-full bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition flex flex-col">
-      
-      {/* TOP */}
-      <div className="flex items-center justify-between mb-3">
-        <span
-          className={`text-xs font-medium px-2 py-1 rounded-full ${
-            modeColors[cardData.event_type] || "bg-gray-100 text-gray-700"
-          }`}
-        >
-          {cardData.event_type}
-        </span>
-
-        <span className="text-xs text-gray-500 capitalize">
-          {cardData.source_language}
-        </span>
-      </div>
-
-      {/* CONTENT (GROWS) */}
-      <div className="flex-grow">
-        <h2 className="text-sm font-semibold text-gray-900 leading-snug line-clamp-2 mb-3">
-          {cardData.name}
-        </h2>
-
-        <div className="space-y-2 text-sm text-gray-600">
-          <div className="flex items-center gap-2">
-            <CalendarDays size={16} />
-            <span>
-              {cardData.start_date} – {cardData.end_date}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Clock size={16} />
-            <span>
-              {cardData.start_time} – {cardData.end_time}
-            </span>
-          </div>
-
-          {cardData.location && (
-            <div className="flex items-center gap-2">
-              <MapPin size={16} />
-              <span className="line-clamp-1">{cardData.location}</span>
+    <div className='bg-white  shadow-sm rounded-md w-full p-4 hover:scale-105 duration-200 ease-in-out'>
+        <div>
+            <h2 className='font-bold '>{cardData.name}</h2>
+            <p>{cardData.event_type}</p>
+            <p>{cardData.source_language}</p>
+            <div className='flex items-center gap-4'>
+                <p>{cardData.start_date}</p>
+                <p>{cardData.start_time}</p>
+            </div>
+            <div className='flex items-center gap-4'>
+                <p>{cardData.end_date}</p>
+                <p>{cardData.end_time}</p>
             </div>
           )}
         </div>
