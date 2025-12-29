@@ -1,4 +1,6 @@
 import { CalendarDays, Clock, MapPin } from "lucide-react";
+import { MdLanguage } from "react-icons/md";
+
 
 const modeColors = {
   "In-person": "bg-green-100 text-green-700",
@@ -20,7 +22,9 @@ const EventCard = ({ cardData }) => {
           {cardData.event_type}
         </span>
 
-        <span className="text-xs text-gray-500 capitalize">
+        <span className="text-xs text-gray-500 capitalize flex items-center gap-1">
+
+          < MdLanguage size={14}/>
           {cardData.source_language}
         </span>
       </div>

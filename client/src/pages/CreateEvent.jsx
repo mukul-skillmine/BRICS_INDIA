@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { IoCloseOutline } from "react-icons/io5";
 import { FaUser, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
+import { MdLanguage } from "react-icons/md";
 import calender from '../assets/images/calendar.svg'
 import axios from 'axios'
 import { toast } from "react-toastify";
@@ -116,15 +117,19 @@ const CreateEvent = ({ setShowModal }) => {
 
 
   return (
-    <div className=" z-9999 w-full h-screen bg-gray-500/60 fixed inset-0 flex items-center justify-center">
+    <div className=" z-9999 w-full h-screen bg-gray-500/60 fixed inset-0 flex items-center justify-center ">
       <div className="container">
-      <div className="w-4/5 mx-auto  bg-white rounded-xl">
+      <div className="w-4/5 mx-auto  bg-white rounded-xl h-2/3 overflow-y-auto">
         <div className="flex justify-between px-8 py-2 items-center  border-b-[1px]">
           <p className="text-lg font-semibold">Create Event</p>
           <IoCloseOutline
             onClick={() => setShowModal(false)}
             className="text-xl cursor-pointer hover:text-2xl transition-all duration-200 ease-out "
           />
+        </div>
+
+        <div>
+          <input type="text" placeholder="Search" />
         </div>
 
         <form className="" onSubmit={handleSubmit(onSubmit)}>
@@ -162,6 +167,7 @@ const CreateEvent = ({ setShowModal }) => {
             <input
               {...register("eventName")}
               className="input-field"
+              placeholder="Enter event name"
             />
             {errors.eventName && (
               <p className="text-red-500 text-xs">{errors.eventName.message}</p>
@@ -254,7 +260,8 @@ const CreateEvent = ({ setShowModal }) => {
           <div className="w-[25%] min-h-full bg-gray-100 border-[1px] border-l px-6 items-center">
 
             <img src={calender} alt="calender" className="mt-16 mx-auto" />
-            <h3 className="text-xl font-medium py-2">Create<br/> Your Event</h3>
+            <h3 className="text-xl font-medium py-2">Create
+ Your Event</h3>
             <p className="text-xs text-gray-600">Start creating your event by providing the basic details now and fill in what your event is all about later</p>
           </div>
           </div>
@@ -271,7 +278,7 @@ const CreateEvent = ({ setShowModal }) => {
             className="text-sm bg-orange-500 hover:bg-orange-600 transition-all duration-300 ease-in-out text-white px-4 py-1 rounded-md float-right"
             disabled={loading}
           > {loading ?"Loading..." : "Next"}
-            
+
           </button>
           </div>
         </form>
