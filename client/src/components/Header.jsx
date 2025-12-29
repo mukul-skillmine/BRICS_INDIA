@@ -6,95 +6,102 @@ import {
   Button,
   Avatar,
   IconButton,
+  Drawer,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
   useMediaQuery,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useTheme } from "@mui/material/styles";
+import { useState } from "react";
+import { NavLink } from "react-router-dom";
+import { NAV_ITEMS } from "./comman/navConfig";
 
-const Header = ({ onMenuClick }) => {
+const HEADER_HEIGHT = 64;
+
+const Header = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const [openMenu, setOpenMenu] = useState(false);
 
   return (
-    <AppBar
-      position="fixed"
-      elevation={0}
-      sx={{
-        height: 64,
-        background: "linear-gradient(180deg, #ff8a3d 80%, #fa7516 100%)",
-        borderBottom: "4px solid #e56712",
-      }}
-    >
-      <Toolbar sx={{ minHeight: 64, px: 2 }}>
-        
-        {/* MOBILE MENU */}
-        {isMobile && (
-          <IconButton color="inherit" onClick={onMenuClick} sx={{ mr: 1 }}>
-            <MenuIcon />
-          </IconButton>
-        )}
-
-        {/* LEFT */}
-        <Box display="flex" alignItems="center" gap={1}>
-          <Typography fontWeight={700}>BRICS</Typography>
-          {!isMobile && (
-            <Box
-              sx={{
-                bgcolor: "#FFF3E8",
-                color: "#9A3412",
-                fontSize: 12,
-                px: 1,
-                py: 0.3,
-                borderRadius: 1,
-                fontWeight: 600,
-              }}
+    <>
+      <AppBar
+        position="fixed"
+        elevation={0}
+        sx={{
+          height: HEADER_HEIGHT,
+          background: "linear-gradient(180deg, #ff8a3d 80%, #fa7516 100%)",
+          borderBottom: "4px solid #e56712",
+          zIndex: theme.zIndex.drawer + 1,
+        }}
+      >
+        <Toolbar sx={{ minHeight: HEADER_HEIGHT }}>
+          {isMobile && (
+            <IconButton
+              color="inherit"
+              edge="start"
+              onClick={() => setOpenMenu(true)}
+              sx={{ mr: 1 }}
             >
-              DRAFT
-            </Box>
+              <MenuIcon />
+            </IconButton>
           )}
-        </Box>
 
-        {/* CENTER (HIDE ON MOBILE) */}
-        {!isMobile && (
-          <Box flex={1} display="flex" justifyContent="center" gap={2}>
-            <Typography fontSize={13} opacity={0.9}>
-              Sat Jan 17, 2026 · 08:00 AM (IST)
-            </Typography>
-            <Typography fontSize={13} opacity={0.9}>
-              English
-            </Typography>
+          <Typography fontWeight={700}>BRICS</Typography>
+
+          <Box ml="auto" display="flex" gap={1}>
+            <Button
+              variant="contained"
+              size="small"
+              sx={{ bgcolor: "#e56712", textTransform: "none" }}
+            >
+              Publish
+            </Button>
+            <Avatar sx={{ width: 32, height: 32 }} />
           </Box>
-        )}
+        </Toolbar>
+      </AppBar>
 
-        {/* RIGHT */}
-        <Box display="flex" alignItems="center" gap={1.5} ml="auto">
-          {!isMobile && (
-            <>
-              <Button color="inherit" size="small">
-                Edit Website
-              </Button>
-              <Button color="inherit" size="small">
-                Preview
-              </Button>
-            </>
-          )}
-
-          <Button
-            variant="contained"
-            size="small"
-            sx={{
-              bgcolor: "#e56712",
-              textTransform: "none",
-              fontWeight: 500,
-            }}
-          >
-            Publish
-          </Button>
-
-          <Avatar sx={{ width: 32, height: 32 }} />
-        </Box>
-      </Toolbar>
-    </AppBar>
+      {/*  MOBILE DRAWER FIXED */}
+      <Drawer
+        anchor="left"
+        open={openMenu}
+        onClose={() => setOpenMenu(false)}
+        variant="temporary"
+        ModalProps={{
+          keepMounted: true,
+        }}
+        PaperProps={{
+          sx: {
+            width: 260,
+            top: HEADER_HEIGHT,
+            height: `calc(100% - ${HEADER_HEIGHT}px)`,
+          },
+        }}
+      >
+        <List>
+          {NAV_ITEMS.map((item) => {
+            const Icon = item.icon;
+            return (
+              <ListItemButton
+                key={item.label}
+                component={NavLink}
+                to={item.path}
+                onClick={() => setOpenMenu(false)}
+              >
+                <ListItemIcon>
+                  <Icon />
+                </ListItemIcon>
+                <ListItemText primary={item.label} />
+              </ListItemButton>
+            );
+          })}
+        </List>
+      </Drawer>
+    </>
   );
 };
 
