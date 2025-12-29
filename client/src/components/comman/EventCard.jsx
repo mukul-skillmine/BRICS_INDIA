@@ -2,7 +2,7 @@ import React from 'react'
 
 const EventCard = ({cardData}) => {
   return (
-    <div className='bg-white  shadow-sm rounded-md w-full p-4'>
+    <div className='bg-white  shadow-sm rounded-md w-full p-4 hover:scale-105 duration-200 ease-in-out'>
         <div>
             <h2 className='font-bold '>{cardData.name}</h2>
             <p>{cardData.event_type}</p>

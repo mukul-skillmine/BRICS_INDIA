@@ -14,7 +14,6 @@ const formatDate = (date) => {
  */
 export const createEvent = async (req, res) => {
   try {
-    console.log(req.body)
     const params = req.body.payload;
     console.log(params)
     if (!params) return res.status(406).json({ success: false, message: 'Request data missing!' });
