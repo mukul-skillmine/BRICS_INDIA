@@ -57,21 +57,20 @@ const CreateEvent = ({ setShowModal }) => {
     if (!email) return;
 
     try {
-      setSendingOtp(true); // 👈 show loader
+      setSendingOtp(true);
 
-      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/otp/send`, {
-        email,
-      });
+      await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/otp/send`,
+        { email }
+      );
 
       toast.success("OTP sent successfully");
 
-      // small delay for smooth UX (optional but recommended)
       setTimeout(() => {
         setShowOtpModal(true);
         setSendingOtp(false);
       }, 400);
     } catch (err) {
-      console.error(err);
       setSendingOtp(false);
       toast.error(err.response?.data?.message || "Failed to send OTP");
     }
@@ -79,11 +78,11 @@ const CreateEvent = ({ setShowModal }) => {
 
   const handleVerifyOtp = async (otp) => {
     try {
-      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/otp/verify`, {
-        email: watch("email"),
-        otp,
-      });
-      console.log("OTP verified:", otp);
+      await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/otp/verify`,
+        { email: watch("email"), otp }
+      );
+
       toast.success("Email verified successfully");
       setEmailVerified(true);
       setShowOtpModal(false);
@@ -111,9 +110,10 @@ const CreateEvent = ({ setShowModal }) => {
         source_language: data.language,
       };
 
-      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/event/create`, {
-        payload,
-      });
+      await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/event/create`,
+        { payload }
+      );
 
       toast.success("Event created successfully!");
       setShowModal(false);
@@ -168,23 +168,25 @@ const CreateEvent = ({ setShowModal }) => {
     <>
       <div className="w-full h-screen bg-gray-500/60 fixed inset-0 flex items-center justify-center">
         <div className="w-4/5 bg-white rounded-xl">
-          <div className="flex justify-between px-8 py-3 border-b">
+          {/* HEADER */}
+          <div className="flex justify-between px-8 py-2 border-b">
             <p className="text-lg font-semibold">Create Event</p>
             <IoCloseOutline
               onClick={() => setShowModal(false)}
-              className="text-2xl cursor-pointer"
+              className="text-xl cursor-pointer"
             />
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex">
+              {/* LEFT */}
               <div className="p-8 w-[75%]">
                 {/* EVENT MODE */}
                 <div className="grid grid-cols-3 gap-4">
                   {options.map((option) => (
                     <label
                       key={option.id}
-                      className={`border p-4 rounded cursor-pointer flex gap-4 ${
+                      className={`border p-4 rounded cursor-pointer flex items-center gap-4 ${
                         selectedMode === option.id
                           ? "border-orange-600 bg-orange-50"
                           : "border-gray-300"
@@ -235,7 +237,7 @@ const CreateEvent = ({ setShowModal }) => {
                   <div className="relative">
                     <input
                       type="email"
-                      placeholder="Provide Email Id"
+                      placeholder="Provide Email ID"
                       disabled={emailVerified}
                       {...register("email")}
                       className={`input-field pr-20 ${
@@ -245,116 +247,56 @@ const CreateEvent = ({ setShowModal }) => {
 
                     <button
                       type="button"
-                      disabled={
-                        emailVerified ||
-                        !emailValue ||
-                        !!errors.email ||
-                        sendingOtp
-                      }
+                      disabled={emailVerified || isEmailInvalid || sendingOtp}
                       onClick={handleVerifyEmail}
                       className={`absolute right-2 top-1/2 -translate-y-1/2
-    flex items-center gap-2 text-sm
-    ${
-      sendingOtp
-        ? "text-gray-400 cursor-wait"
-        : emailVerified
-        ? "text-green-600"
-        : emailValue && !errors.email
-        ? "text-gray-600 hover:text-gray-700"
-        : "text-gray-400 cursor-not-allowed"
-    }`}
+                        flex items-center gap-1 text-sm
+                        ${
+                          sendingOtp
+                            ? "text-gray-400 cursor-wait"
+                            : emailVerified
+                            ? "text-green-600"
+                            : isEmailInvalid
+                            ? "text-gray-400 cursor-not-allowed"
+                            : "text-gray-600 hover:text-gray-700"
+                        }`}
                     >
-                      {sendingOtp
-                        ? "Sending..."
-                        : emailVerified
-                        ? "Verified ✓"
-                        : "Verify"}
+                      {sendingOtp ? (
+                        "Sending..."
+                      ) : emailVerified ? (
+                        "Verified ✓"
+                      ) : isEmailInvalid ? (
+                        <>
+                          
+                          Verify
+                        </>
+                      ) : (
+                        "Verify"
+                      )}
                     </button>
                   </div>
                 </div>
 
                 {/* DATE & TIME */}
-                <div className="flex gap-4 justify-between items-start mt-4">
-                  <div className="flex flex-col w-1/4">
-                    <label
-                      htmlFor="start-date"
-                      className="text-xs text-gray-800"
-                    >
-                      {" "}
-                      Start Date
-                      <span className="text-red-500 font-bold">*</span>{" "}
-                    </label>
-                    <input
-                      type="date"
-                      {...register("startDate")}
-                      className="input-field"
-                    />
-                    {errors.startDate && (
-                      <p className="text-red-500 text-xs">
-                        {errors.startDate.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="flex flex-col w-1/4">
-                    <label
-                      htmlFor="start-time"
-                      className="text-xs text-gray-800"
-                    >
-                      {" "}
-                      Start Time
-                      <span className="text-red-500 font-bold">*</span>{" "}
-                    </label>
-                    <input
-                      type="time"
-                      {...register("startTime")}
-                      className="input-field"
-                    />
-                    {errors.startTime && (
-                      <p className="text-red-500 text-xs">
-                        {errors.startTime.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="flex flex-col w-1/4">
-                    <label htmlFor="end-date" className="text-xs text-gray-800">
-                      {" "}
-                      End Date<span className="text-red-500 font-bold">
-                        *
-                      </span>{" "}
-                    </label>
-                    <input
-                      type="date"
-                      {...register("endDate")}
-                      className="input-field"
-                    />
-                    {errors.endDate && (
-                      <p className="text-red-500 text-xs">
-                        {errors.endDate.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="flex flex-col w-1/4">
-                    <label htmlFor="end-time" className="text-xs text-gray-800">
-                      {" "}
-                      End Time<span className="text-red-500 font-bold">
-                        *
-                      </span>{" "}
-                    </label>
-                    <input
-                      type="time"
-                      {...register("endTime")}
-                      className="input-field"
-                    />
-                    {errors.endTime && (
-                      <p className="text-red-500 text-xs">
-                        {errors.endTime.message}
-                      </p>
-                    )}
-                  </div>
+                <div className="flex gap-4 mt-4">
+                  {["startDate", "startTime", "endDate", "endTime"].map(
+                    (field, idx) => (
+                      <div className="w-1/4" key={idx}>
+                        <input
+                          type={field.includes("Time") ? "time" : "date"}
+                          {...register(field)}
+                          className="input-field"
+                        />
+                        {errors[field] && (
+                          <p className="text-red-500 text-xs">
+                            {errors[field].message}
+                          </p>
+                        )}
+                      </div>
+                    )
+                  )}
                 </div>
+
                 {/* LANGUAGE */}
                 <div className="mt-4">
                   <label className="text-xs">Language *</label>
@@ -369,6 +311,7 @@ const CreateEvent = ({ setShowModal }) => {
                 </div>
               </div>
 
+              {/* RIGHT */}
               <div className="w-[25%] bg-gray-100 p-6">
                 <img src={calender} className="mx-auto mt-10" />
                 <p className="text-sm text-gray-600 mt-4">
@@ -377,6 +320,7 @@ const CreateEvent = ({ setShowModal }) => {
               </div>
             </div>
 
+            {/* FOOTER */}
             <div className="flex justify-end p-4 border-t">
               <button
                 type="submit"
@@ -390,17 +334,17 @@ const CreateEvent = ({ setShowModal }) => {
         </div>
       </div>
 
+      {/* LOADER */}
       {sendingOtp && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl px-6 py-4 flex items-center gap-3 shadow-lg">
+          <div className="bg-white px-6 py-4 rounded-xl flex items-center gap-3">
             <div className="w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
-            <span className="text-sm font-medium text-gray-700">
-              Sending OTP...
-            </span>
+            <span className="text-sm">Sending OTP...</span>
           </div>
         </div>
       )}
 
+      {/* OTP MODAL */}
       {showOtpModal && (
         <OtpModal
           email={watch("email")}
