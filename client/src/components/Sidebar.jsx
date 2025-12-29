@@ -3,54 +3,49 @@ import {
   List,
   ListItemButton,
   ListItemIcon,
-  Box,
   Tooltip,
 } from "@mui/material";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import EventIcon from "@mui/icons-material/Event";
 import { NavLink } from "react-router-dom";
+import { NAV_ITEMS } from "./comman/navConfig";
 
 const DRAWER_WIDTH = 72;
 const HEADER_HEIGHT = 64;
 
-const Sidebar = ({ mobileOpen, onClose, isMobile }) => {
+const Sidebar = () => {
   return (
     <Drawer
-      variant={isMobile ? "temporary" : "permanent"}
-      open={isMobile ? mobileOpen : true}
-      onClose={onClose}
-      ModalProps={{ keepMounted: true }}
+      variant="permanent"
       sx={{
         width: DRAWER_WIDTH,
         [`& .MuiDrawer-paper`]: {
           width: DRAWER_WIDTH,
-          top: isMobile ? 0 : `${HEADER_HEIGHT}px`,
-          height: isMobile ? "100%" : `calc(100% - ${HEADER_HEIGHT}px)`,
+          top: `${HEADER_HEIGHT}px`,
+          height: `calc(100% - ${HEADER_HEIGHT}px)`,
           borderRight: "1px solid #fa7516",
           display: "flex",
           alignItems: "center",
         },
       }}
     >
-      <Box mt={2} width="100%">
-        <List sx={{ px: 1 }}>
-          <Tooltip title="Dashboard" placement="right">
-            <ListItemButton component={NavLink} to="/" sx={navItemStyles}>
-              <ListItemIcon sx={{ minWidth: 0 }}>
-                <DashboardIcon />
-              </ListItemIcon>
-            </ListItemButton>
-          </Tooltip>
+      <List sx={{ width: "100%", px: 1, mt: 2 }}>
+        {NAV_ITEMS && NAV_ITEMS.map((item) => {
+          const Icon = item.icon;
 
-          <Tooltip title="Events" placement="right">
-            <ListItemButton component={NavLink} to="/events" sx={navItemStyles}>
-              <ListItemIcon sx={{ minWidth: 0 }}>
-                <EventIcon />
-              </ListItemIcon>
-            </ListItemButton>
-          </Tooltip>
-        </List>
-      </Box>
+          return (
+            <Tooltip key={item.label} title={item.label} placement="right">
+              <ListItemButton
+                component={NavLink}
+                to={item.path}
+                sx={navItemStyles}
+              >
+                <ListItemIcon sx={{ minWidth: 0 }}>
+                  <Icon />
+                </ListItemIcon>
+              </ListItemButton>
+            </Tooltip>
+          );
+        })}
+      </List>
     </Drawer>
   );
 };
