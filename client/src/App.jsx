@@ -3,6 +3,7 @@ import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Events from "./pages/Events";
 import { ToastContainer, toast } from 'react-toastify';
+import Registrations from "./pages/Registrations";
 
 
 const App = () => {
@@ -14,6 +15,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/events" element={<Events />} />
+            <Route path="/registrations" element={<Registrations />} />
           </Routes>
         </Layout>
       </BrowserRouter>
