@@ -18,6 +18,8 @@ import { useTheme } from "@mui/material/styles";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { NAV_ITEMS } from "./comman/navConfig";
+// import RegisterModal from "./auth/RegisterModal";
+import AuthContainer from "./auth/AuthContainer";
 
 const HEADER_HEIGHT = 64;
 
@@ -25,6 +27,8 @@ const Header = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [openMenu, setOpenMenu] = useState(false);
+  // const [showRegister, setShowRegister] = useState(false);
+  const [openAuth, setOpenAuth] = useState(false);
 
   return (
     <>
@@ -61,8 +65,30 @@ const Header = () => {
               Publish
             </Button>
             <Avatar sx={{ width: 32, height: 32 }} />
+
+              {/* <Button
+        size="small"
+        variant="contained"
+        sx={{ bgcolor: "#e56712", textTransform: "none" }}
+        onClick={() => setShowRegister(true)}
+      >
+        Register
+      </Button> */}
+       <Button
+            variant="contained"
+            size="small"
+            sx={{ bgcolor: "#e56712" }}
+            onClick={() => setOpenAuth(true)}
+          >
+            Register
+          </Button>
           </Box>
+          
         </Toolbar>
+        {/* {showRegister && (
+        <RegisterModal setShowModal={setShowRegister} />
+      )} */}
+      {openAuth && <AuthContainer onClose={() => setOpenAuth(false)} />}
       </AppBar>
 
       {/*  MOBILE DRAWER FIXED */}

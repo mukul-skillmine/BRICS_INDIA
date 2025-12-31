@@ -1,7 +1,11 @@
 import React, { useRef, useState } from "react";
 import { IoCloseOutline } from "react-icons/io5";
+import useEscapeKey from "../hooks/useEscapeKey";
 
 const OtpModal = ({ email, onClose, onVerify }) => {
+
+useEscapeKey(onClose);
+
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const inputRefs = useRef([]);
 
@@ -30,7 +34,8 @@ const OtpModal = ({ email, onClose, onVerify }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    // <div className="fixed inset-0 z-[9999] bg-gray-500/60 flex items-center justify-center text-black">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[12000]">
       <div className="bg-white w-[440px] rounded-2xl p-6 relative shadow-xl">
         {/* CLOSE */}
         <button
@@ -61,9 +66,14 @@ const OtpModal = ({ email, onClose, onVerify }) => {
               value={digit}
               onChange={(e) => handleChange(e.target.value, index)}
               onKeyDown={(e) => handleKeyDown(e, index)}
-              className="w-12 h-12 text-center border border-gray-300 rounded-lg
-                         text-lg focus:outline-none focus:ring-2
-                         focus:ring-orange-500 focus:border-orange-500"
+              className="w-12 h-12 text-center
+  border border-gray-300 rounded-lg
+  text-lg font-semibold
+  text-black caret-black
+  bg-white
+  focus:outline-none
+  focus:ring-2 focus:ring-orange-500
+  focus:border-orange-500"
             />
           ))}
         </div>
