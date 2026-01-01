@@ -9,7 +9,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 export const NAV_ITEMS = [
   {
     label: "Dashboard",
-    path: "/",
+    path: "/home",
     icon: DashboardIcon,
   },
   {
@@ -43,3 +43,4 @@ export const NAV_ITEMS = [
     icon: SettingsIcon,
   },
 ];
+
