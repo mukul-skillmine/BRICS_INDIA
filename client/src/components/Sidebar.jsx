@@ -12,6 +12,9 @@ const DRAWER_WIDTH = 72;
 const HEADER_HEIGHT = 64;
 
 const Sidebar = () => {
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const role = user?.role;
+
   return (
     <Drawer
       variant="permanent"
@@ -28,23 +31,25 @@ const Sidebar = () => {
       }}
     >
       <List sx={{ width: "100%", px: 1, mt: 2 }}>
-        {NAV_ITEMS && NAV_ITEMS.map((item) => {
-          const Icon = item.icon;
+        {NAV_ITEMS
+          ?.filter((item) => item.roles.includes(role)) // ✅ ONLY LOGIC CHANGE
+          .map((item) => {
+            const Icon = item.icon;
 
-          return (
-            <Tooltip key={item.label} title={item.label} placement="right">
-              <ListItemButton
-                component={NavLink}
-                to={item.path}
-                sx={navItemStyles}
-              >
-                <ListItemIcon sx={{ minWidth: 0 }}>
-                  <Icon />
-                </ListItemIcon>
-              </ListItemButton>
-            </Tooltip>
-          );
-        })}
+            return (
+              <Tooltip key={item.label} title={item.label} placement="right">
+                <ListItemButton
+                  component={NavLink}
+                  to={item.path}
+                  sx={navItemStyles}
+                >
+                  <ListItemIcon sx={{ minWidth: 0 }}>
+                    <Icon />
+                  </ListItemIcon>
+                </ListItemButton>
+              </Tooltip>
+            );
+          })}
       </List>
     </Drawer>
   );

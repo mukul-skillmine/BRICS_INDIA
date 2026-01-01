@@ -5,56 +5,43 @@ import Events from "./pages/Events";
 import Registrations from "./pages/Registrations";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import { getToken } from "./utils/auth";
 import { ToastContainer } from "react-toastify";
-import { isLoggedIn } from "./utils/auth";
+import AdminList from "./pages/AdminUsers";
 
 const App = () => {
+  const isLoggedIn = !!getToken();
+
   return (
     <BrowserRouter>
       <ToastContainer />
 
       <Routes>
-        {/* ROOT REDIRECT */}
+        <Route path="/login" element={isLoggedIn ? <Navigate to="/home" /> : <Login />} />
+        <Route path="/signup" element={isLoggedIn ? <Navigate to="/home" /> : <Signup />} />
+
+        {/* ROOT */}
         <Route
           path="/"
-          element={<Navigate to={isLoggedIn() ? "/home" : "/login"} />}
+          element={<Navigate to={isLoggedIn ? "/home" : "/login"} />}
         />
 
-        {/* AUTH ROUTES */}
-        <Route
-          path="/login"
-          element={isLoggedIn() ? <Navigate to="/home" /> : <Login />}
-        />
-        <Route
-          path="/signup"
-          element={isLoggedIn() ? <Navigate to="/home" /> : <Signup />}
-        />
-
-        {/* PROTECTED ROUTES */}
-        <Route
-          path="/home"
-          element={
-            <Layout>
-              <Home />
-            </Layout>
-          }
-        />
-        <Route
-          path="/events"
-          element={
-            <Layout>
-              <Events />
-            </Layout>
-          }
-        />
-        <Route
-          path="/registrations"
-          element={
-            <Layout>
-              <Registrations />
-            </Layout>
-          }
-        />
+        {/* PROTECTED */}
+        {isLoggedIn && (
+          <Route
+            path="/*"
+            element={
+              <Layout>
+                <Routes>
+                  <Route path="/home" element={<Home />} />
+                  <Route path="/events" element={<Events />} />
+                  <Route path="/registrations" element={<Registrations />} />
+                  <Route path="/admins" element={<AdminList />} />
+                </Routes>
+              </Layout>
+            }
+          />
+        )}
       </Routes>
     </BrowserRouter>
   );

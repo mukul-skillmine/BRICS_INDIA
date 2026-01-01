@@ -312,8 +312,30 @@ export const deleteUserProfile = async (req, res) => {
  */
 export const getUserList = async (req, res) => {
   try {
-    const userList = await UserManager.getUserList({});
-    res.status(200).json({ success: true, userList });
+    const { role, search } = req.query;
+
+    const filter = {};
+
+    // 🔹 ROLE FILTER (Admin / Super Admin / Visitor)
+    if (role) {
+      filter.role = role;
+    }
+
+    // 🔹 SEARCH FILTER (name / email)
+    if (search) {
+      filter.$or = [
+        { first_name: { $regex: search, $options: "i" } },
+        { last_name: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const userList = await UserManager.getUserList(filter);
+
+    res.status(200).json({
+      success: true,
+      userList,
+    });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }

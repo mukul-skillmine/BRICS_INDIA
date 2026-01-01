@@ -11,36 +11,48 @@ export const NAV_ITEMS = [
     label: "Dashboard",
     path: "/home",
     icon: DashboardIcon,
+    roles: ["Super Admin", "Admin", "Visitor"],
   },
   {
     label: "Events",
     path: "/events",
     icon: EventIcon,
+    roles: ["Super Admin", "Admin", "Visitor"], // Visitor can VIEW events
   },
   {
-    label: "Registrations",
+    label: "Create Admin",
+    path: "/admins",
+    icon: PeopleIcon,
+    roles: ["Super Admin"],
+  },
+  {
+    label: "My Registrations",
     path: "/registrations",
     icon: AssignmentIcon,
+    roles: ["Super Admin", "Admin", "Visitor"], // Visitor sees own registrations
   },
   {
     label: "Participants",
     path: "/participants",
     icon: PeopleIcon,
+    roles: ["Super Admin", "Admin"],
   },
   {
     label: "Attendance",
     path: "/attendance",
     icon: HowToRegIcon,
+    roles: ["Admin"],
   },
   {
     label: "Reports",
     path: "/reports",
     icon: BarChartIcon,
+    roles: ["Super Admin"],
   },
   {
     label: "Settings",
     path: "/settings",
     icon: SettingsIcon,
+    roles: ["Super Admin"],
   },
 ];
-

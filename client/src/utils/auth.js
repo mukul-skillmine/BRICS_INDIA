@@ -1,8 +1,9 @@
 export const getUser = () => {
   try {
-    return JSON.parse(localStorage.getItem("user") || "{}");
+    const user = localStorage.getItem("user");
+    return user ? JSON.parse(user) : null;
   } catch {
-    return {};
+    return null;
   }
 };
 
