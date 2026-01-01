@@ -9,22 +9,22 @@ import OtpModal from "../OtpModal";
 import FullScreenLoader from "../../features/FullScreenLoader";
 import useEscapeKey from "../../hooks/useEscapeKey";
 
-const RegisterModal = ({ setShowModal, setShowLogin,onClose  }) => {
+const RegisterModal = ({ openLogin ,onClose  }) => {
 
-  useEscapeKey(() => {
-    if (showOtpModal) {
-      setShowOtpModal(false);
-    } else {
-      onClose(); // 🔥 closes AuthContainer + Header state
-    }
-  });
+   useEscapeKey(onClose);
+
+  // useEscapeKey(() => {
+  //   if (showOtpModal) {
+  //     setShowOtpModal(false);
+  //   } else {
+  //     onClose(); // 🔥 closes AuthContainer + Header state
+  //   }
+  // });
   /* -------------------- LOCAL STATE -------------------- */
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [emailVerified, setEmailVerified] = useState(false);
   const [loading, setLoading] = useState(false);
   const [sendingOtp, setSendingOtp] = useState(false);
-  console.log("sendingOtp", sendingOtp);
-  console.log("otp modal value", showOtpModal);
 
   /* ---------------- VALIDATION SCHEMA ---------------- */
   const registerSchema = z.object({
@@ -184,7 +184,7 @@ const RegisterModal = ({ setShowModal, setShowLogin,onClose  }) => {
             </div>
 
             <IoCloseOutline
-              onClick={() => setShowModal(false)}
+              onClick={onClose}
               className="text-2xl cursor-pointer hover:text-orange-600 transition"
             />
           </div>
@@ -406,10 +406,7 @@ const RegisterModal = ({ setShowModal, setShowLogin,onClose  }) => {
     Already have an account?{" "}
     <button
       type="button"
-      onClick={() => {
-        setShowModal(false);
-        setShowLogin(true);
-      }}
+      onClick={openLogin}
       className="text-orange-600 font-medium hover:underline"
     >
       Login here

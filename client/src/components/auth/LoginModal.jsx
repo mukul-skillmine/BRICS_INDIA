@@ -16,10 +16,8 @@ const loginSchema = z.object({
   password: z.string().min(8, "Password is required"),
 });
 
-const LoginModal = ({ setShowLogin, setShowRegister,onClose }) => {
-  useEscapeKey(() => {
-    onClose(); // 🔥 closes AuthContainer + Header
-  });
+const LoginModal = ({ openRegister,onClose }) => {
+   useEscapeKey(onClose);
 
   const [loading, setLoading] = useState(false);
   
@@ -126,10 +124,7 @@ const LoginModal = ({ setShowLogin, setShowRegister,onClose }) => {
               Don’t have an account?{" "}
               <button
                 type="button"
-                onClick={() => {
-                  setShowLogin(false);
-                  setShowRegister(true);
-                }}
+                onClick={openRegister}
                 className="text-orange-600 font-medium hover:underline"
               >
                 Register here

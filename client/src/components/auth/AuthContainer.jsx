@@ -4,33 +4,35 @@ const AuthContainer = ({ onClose }) => {
   const [showRegister, setShowRegister] = useState(true);
   const [showLogin, setShowLogin] = useState(false);
 
+  const openRegister = () => {
+    setShowLogin(false);
+    setShowRegister(true);
+  };
+
+  const openLogin = () => {
+    setShowRegister(false);
+    setShowLogin(true);
+  };
+
   const closeAll = () => {
     setShowRegister(false);
     setShowLogin(false);
-    onClose(); // 🔥 THIS closes Header openAuth
+    onClose(); // 🔥 Header controls visibility
   };
 
   return (
     <>
       {showRegister && (
         <RegisterModal
-          setShowModal={setShowRegister}
-          setShowLogin={() => {
-            setShowRegister(false);
-            setShowLogin(true);
-          }}
           onClose={closeAll}
+          openLogin={openLogin}
         />
       )}
 
       {showLogin && (
         <LoginModal
-          setShowLogin={setShowLogin}
-          setShowRegister={() => {
-            setShowLogin(false);
-            setShowRegister(true);
-          }}
           onClose={closeAll}
+          openRegister={openRegister}
         />
       )}
     </>
@@ -38,3 +40,4 @@ const AuthContainer = ({ onClose }) => {
 };
 
 export default AuthContainer;
+
