@@ -26,10 +26,10 @@ export const NAV_ITEMS = [
     roles: ["Super Admin"],
   },
   {
-    label: "My Registrations",
-    path: "/registrations",
+    label: "Approval List",
+    path: "/approvals",
     icon: AssignmentIcon,
-    roles: ["Super Admin", "Admin", "Visitor"], // Visitor sees own registrations
+    roles: ["Super Admin", "Admin", "Visitor"], // Visitor sees own approvals
   },
   {
     label: "Participants",

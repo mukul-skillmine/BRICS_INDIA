@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Events from "./pages/Events";
-import Registrations from "./pages/Registrations";
+import ApprovalList from "./pages/ApprovalList";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import { getToken } from "./utils/auth";
@@ -35,7 +35,7 @@ const App = () => {
                 <Routes>
                   <Route path="/home" element={<Home />} />
                   <Route path="/events" element={<Events />} />
-                  <Route path="/registrations" element={<Registrations />} />
+                  <Route path="/approvals" element={<ApprovalList />} />
                   <Route path="/admins" element={<AdminList />} />
                 </Routes>
               </Layout>

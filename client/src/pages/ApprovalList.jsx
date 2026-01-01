@@ -1,8 +1,8 @@
 import { Box, Typography, Tabs, Tab } from "@mui/material";
 import { useState } from "react";
-import RegistrationTable from "../components/comman/RegistrationTable";
+import ApprovalTable from "../components/comman/ApprovalTable";
 
-const Registrations = () => {
+const ApprovalList = () => {
   const [tab, setTab] = useState(0);
 
   return (
@@ -21,10 +21,10 @@ const Registrations = () => {
 
       {/* 🔹 TABLE */}
       <Box mt={2}>
-        <RegistrationTable status={tab} />
+        <ApprovalTable status={tab} />
       </Box>
     </Box>
   );
 };
 
-export default Registrations;
+export default ApprovalList;

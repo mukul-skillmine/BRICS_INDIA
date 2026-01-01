@@ -36,7 +36,7 @@ const statusMap = {
   2: "rejected",
 };
 
-const RegistrationTable = ({ status }) => {
+const ApprovalTable = ({ status }) => {
   const filteredData = mockData.filter(
     (row) => row.status === statusMap[status]
   );
@@ -98,7 +98,7 @@ const RegistrationTable = ({ status }) => {
             {!filteredData.length && (
               <TableRow>
                 <TableCell colSpan={5} align="center">
-                  No registrations found
+                  No Approval found
                 </TableCell>
               </TableRow>
             )}
@@ -109,4 +109,4 @@ const RegistrationTable = ({ status }) => {
   );
 };
 
-export default RegistrationTable;
+export default ApprovalTable;
