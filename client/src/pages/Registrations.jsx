@@ -6,17 +6,20 @@ const Registrations = () => {
   const [tab, setTab] = useState(0);
 
   return (
-    <Box>
+    <Box mt={10}>
+      {/* 🔹 PAGE HEADING */}
       <Typography variant="h5" fontWeight={600} mb={2}>
-        Registrations
+        Approvals
       </Typography>
 
+      {/* 🔹 TABS */}
       <Tabs value={tab} onChange={(e, v) => setTab(v)}>
         <Tab label="Pending Approval" />
         <Tab label="Approved" />
         <Tab label="Rejected" />
       </Tabs>
 
+      {/* 🔹 TABLE */}
       <Box mt={2}>
         <RegistrationTable status={tab} />
       </Box>
