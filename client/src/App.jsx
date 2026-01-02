@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Events from "./pages/Events";
-import Registrations from "./pages/Registrations";
+// import Registrations from "./pages/Registrations";
 import RegistrationPage from "./pages/RegistrationPage";
 import ApprovalList from "./pages/ApprovalList";
 import AdminList from "./pages/AdminUsers";
