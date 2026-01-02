@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  AppBar,
-  Toolbar,
-  Button,
-  Box,
-  Typography,
-} from "@mui/material";
+import { AppBar, Toolbar, Button, Box, Typography } from "@mui/material";
 import CreateEvent from "../pages/CreateEvent";
 
 const Navbar = () => {
@@ -17,18 +11,18 @@ const Navbar = () => {
         <Toolbar sx={{ justifyContent: "space-between" }}>
           <Typography variant="h6">BRICS</Typography>
 
-         <Button
-  variant=""
-  sx={{
-    bgcolor: "#fa7516",
-    "&:hover": {
-      bgcolor: "#e56712", // slightly darker for hover
-    },
-  }}
-  onClick={() => setShowModal(true)}
->
-  Create Event
-</Button>
+          <Button
+            variant="con"
+            sx={{
+              bgcolor: "#fa7516",
+              "&:hover": {
+                bgcolor: "#e56712", // slightly darker for hover
+              },
+            }}
+            onClick={() => setShowModal(true)}
+          >
+            Create Event
+          </Button>
         </Toolbar>
       </AppBar>
 
