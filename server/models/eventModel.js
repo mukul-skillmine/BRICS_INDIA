@@ -94,7 +94,8 @@ const eventSchema = new mongoose.Schema(
       updatedAt: 'updated_at'
     },
     versionKey: false
-  }
+  },
+  {timestamps:true}
 );
 
 const Event = mongoose.model('Event', eventSchema);

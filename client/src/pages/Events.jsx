@@ -8,40 +8,23 @@ import EventCard from "../components/comman/EventCard";
 const Events = () => {
   const [showModal, setShowModal] = useState(false);
   const [eventList, setEventList] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [filterEventList, setFilterEventList] = useState([]);
-  const [searchInput, setSearchInput] = useState("");
+  const [loading,setLoading] = useState(false);
 
   const getTheEventList = async () => {
-    setLoading(true);
+      setLoading(true)
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_BASE_URL}/api/event/list`
       );
       setEventList(response?.data?.eventList);
-      setFilterEventList(response?.data?.eventList);
       console.log(response?.data?.eventList);
     } catch (error) {
       console.log(error.message);
       console.log("Error while fetching the data from the api");
-    } finally {
+    }finally{
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    setTimeout(()=>{
-    if (!searchInput) {
-      // If search is empty, show all events
-      setFilterEventList(eventList);
-      return;
-    }
-    const filteredEvents = eventList.filter((event) =>
-      event?.name?.toLowerCase().includes(searchInput.toLowerCase())
-    );
-    setFilterEventList(filteredEvents);
-    },500)
-  }, [searchInput, eventList]);
 
   useEffect(() => {
     getTheEventList();
@@ -75,24 +58,14 @@ const Events = () => {
         </Button>
       </Box>
 
-      <div className="sm:w-full md:w-1/2 lg:w-1/3 my-6">
-        <input
-          type="text"
-          placeholder="Search"
-          className="rounded-md input-field"
-          onChange={(e) => setSearchInput(e.target.value)}
-        />
-      </div>
-
       {/* EMPTY STATE */}
-      {loading && (
-        <div className="w-full flex h-screen justify-center items-center">
-          <span className="loader mb-16"></span>
-        </div>
-      )}
+ {loading && <div className="w-full flex h-screen justify-center items-center">
+          <p>Loading...</p>
+        </div> }
       <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4">
-        {filterEventList.length > 0 ? (
-          filterEventList.map((event) => (
+       
+        {eventList.length > 0 ? (
+          eventList.map((event) => (
             <div className="w-full ">
               <EventCard cardData={event} />
             </div>

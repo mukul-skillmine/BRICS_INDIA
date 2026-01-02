@@ -127,7 +127,10 @@ export const deleteEvent = async (req, res) => {
  */
 export const getEventList = async (req, res) => {
   try {
-    const events = await EventManager.getEventList({ is_active: true });
+    const events = await EventManager.getEventList(
+      { is_active: true },
+      { sort: { createdAt: -1 } } // 👈 pass sort option
+    );
 
     // Format dates
     const formattedEvents = events.map(event => ({
