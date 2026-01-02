@@ -2,45 +2,32 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Events from "./pages/Events";
-<<<<<<< HEAD
-import { ToastContainer, toast } from 'react-toastify';
 import Registrations from "./pages/Registrations";
 import RegistrationPage from "./pages/RegistrationPage";
-
-=======
 import ApprovalList from "./pages/ApprovalList";
+import AdminList from "./pages/AdminUsers";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import { getToken } from "./utils/auth";
 import { ToastContainer } from "react-toastify";
-import AdminList from "./pages/AdminUsers";
->>>>>>> origin/HemantNewFeature
 
 const App = () => {
   const isLoggedIn = !!getToken();
 
   return (
-<<<<<<< HEAD
-    <div className='w-full'>
-      <ToastContainer/>
-      <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/events" element={<Events />} />
-            <Route path="/registrations" element={<Registrations />} />
-            <Route path="/register" element={<RegistrationPage />} />
-          </Routes>
-        </Layout>
-      </BrowserRouter>
-    </div>
-=======
     <BrowserRouter>
       <ToastContainer />
 
       <Routes>
-        <Route path="/login" element={isLoggedIn ? <Navigate to="/home" /> : <Login />} />
-        <Route path="/signup" element={isLoggedIn ? <Navigate to="/home" /> : <Signup />} />
+        {/* AUTH ROUTES */}
+        <Route
+          path="/login"
+          element={isLoggedIn ? <Navigate to="/home" /> : <Login />}
+        />
+        <Route
+          path="/signup"
+          element={isLoggedIn ? <Navigate to="/home" /> : <Signup />}
+        />
 
         {/* ROOT */}
         <Route
@@ -48,7 +35,7 @@ const App = () => {
           element={<Navigate to={isLoggedIn ? "/home" : "/login"} />}
         />
 
-        {/* PROTECTED */}
+        {/* PROTECTED ROUTES */}
         {isLoggedIn && (
           <Route
             path="/*"
@@ -57,6 +44,8 @@ const App = () => {
                 <Routes>
                   <Route path="/home" element={<Home />} />
                   <Route path="/events" element={<Events />} />
+                  <Route path="/registrations" element={<Registrations />} />
+                  <Route path="/register" element={<RegistrationPage />} />
                   <Route path="/approvals" element={<ApprovalList />} />
                   <Route path="/admins" element={<AdminList />} />
                 </Routes>
@@ -66,7 +55,6 @@ const App = () => {
         )}
       </Routes>
     </BrowserRouter>
->>>>>>> origin/HemantNewFeature
   );
 };
 
