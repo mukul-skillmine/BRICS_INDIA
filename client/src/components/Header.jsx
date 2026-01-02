@@ -3,19 +3,14 @@ import {
   Toolbar,
   Box,
   Typography,
-  Button,
   Avatar,
   IconButton,
-  Drawer,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  useMediaQuery,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useTheme } from "@mui/material/styles";
 import { useState } from "react";
+<<<<<<< HEAD
 import { NavLink } from "react-router-dom";
 import { NAV_ITEMS } from "./comman/navConfig";
 // import RegisterModal from "./auth/RegisterModal";
@@ -29,33 +24,35 @@ const Header = () => {
   const [openMenu, setOpenMenu] = useState(false);
   // const [showRegister, setShowRegister] = useState(false);
   const [openAuth, setOpenAuth] = useState(false);
+=======
+import { getUser, logout } from "../utils/auth";
+
+const Header = () => {
+  const user = getUser();
+  const [anchorEl, setAnchorEl] = useState(null);
+>>>>>>> origin/HemantNewFeature
 
   return (
-    <>
-      <AppBar
-        position="fixed"
-        elevation={0}
-        sx={{
-          height: HEADER_HEIGHT,
-          background: "linear-gradient(180deg, #ff8a3d 80%, #fa7516 100%)",
-          borderBottom: "4px solid #e56712",
-          zIndex: theme.zIndex.drawer + 1,
-        }}
-      >
-        <Toolbar sx={{ minHeight: HEADER_HEIGHT }}>
-          {isMobile && (
-            <IconButton
-              color="inherit"
-              edge="start"
-              onClick={() => setOpenMenu(true)}
-              sx={{ mr: 1 }}
-            >
-              <MenuIcon />
-            </IconButton>
-          )}
+    <AppBar
+      position="fixed"
+      elevation={0}
+      sx={{
+        height: 64,
+        background: "linear-gradient(180deg, #ff8a3d 80%, #fa7516 100%)",
+      }}
+    >
+      <Toolbar>
+        <Typography fontWeight={700}>BRICS</Typography>
 
-          <Typography fontWeight={700}>BRICS</Typography>
+        <Box ml="auto" display="flex" alignItems="center" gap={2}>
+          {user && (
+            <>
+              <Box textAlign="right">
+                <Typography fontSize={14}>{user.first_name} {user.last_name}</Typography>
+                <Typography fontSize={12} opacity={0.8}>{user.role}</Typography>
+              </Box>
 
+<<<<<<< HEAD
           <Box ml="auto" display="flex" gap={1}>
             <Button
               variant="contained"
@@ -90,44 +87,24 @@ const Header = () => {
       )} */}
       {openAuth && <AuthContainer onClose={() => setOpenAuth(false)} />}
       </AppBar>
+=======
+              <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+                <Avatar>{user.first_name?.[0]}</Avatar>
+              </IconButton>
+>>>>>>> origin/HemantNewFeature
 
-      {/*  MOBILE DRAWER FIXED */}
-      <Drawer
-        anchor="left"
-        open={openMenu}
-        onClose={() => setOpenMenu(false)}
-        variant="temporary"
-        ModalProps={{
-          keepMounted: true,
-        }}
-        PaperProps={{
-          sx: {
-            width: 260,
-            top: HEADER_HEIGHT,
-            height: `calc(100% - ${HEADER_HEIGHT}px)`,
-          },
-        }}
-      >
-        <List>
-          {NAV_ITEMS.map((item) => {
-            const Icon = item.icon;
-            return (
-              <ListItemButton
-                key={item.label}
-                component={NavLink}
-                to={item.path}
-                onClick={() => setOpenMenu(false)}
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={() => setAnchorEl(null)}
               >
-                <ListItemIcon>
-                  <Icon />
-                </ListItemIcon>
-                <ListItemText primary={item.label} />
-              </ListItemButton>
-            );
-          })}
-        </List>
-      </Drawer>
-    </>
+                <MenuItem onClick={logout}>Logout</MenuItem>
+              </Menu>
+            </>
+          )}
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 };
 

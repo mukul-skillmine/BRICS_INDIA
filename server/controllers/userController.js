@@ -1,9 +1,110 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import * as UserManager from '../managers/userManager.js';
 import * as UserEventMappingManager from '../managers/userManager.js';
 import * as EventManager from '../managers/eventManager.js';
 
 const allowedRoles = ['Super Admin', 'Admin', 'Visitor'];
+
+
+
+/**
+ * ==================== PUBLIC SIGNUP ====================
+ * Role: Visitor only
+ * No created_by
+ */
+export const signupUser = async (req, res) => {
+  try {
+    if (!req.body.payload) {
+      return res.status(406).json({
+        success: false,
+        message: 'Request data missing',
+      });
+    }
+
+    const params = req.body.payload;
+
+    // Required fields
+    if (!params.first_name || !params.last_name || !params.email || !params.password) {
+      return res.status(406).json({
+        success: false,
+        message: 'Required fields missing',
+      });
+    }
+
+    // Email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(params.email)) {
+      return res.status(422).json({
+        success: false,
+        message: 'Invalid email format',
+      });
+    }
+
+    // Check existing user
+    const existingUser = await UserManager.getUserDetails({
+      email: params.email.toLowerCase(),
+    });
+
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: 'Email already registered',
+      });
+    }
+
+    // Password validation (same as schema)
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/;
+
+    if (!passwordRegex.test(params.password)) {
+      return res.status(422).json({
+        success: false,
+        message:
+          'Password must contain uppercase, lowercase, number, and special character',
+      });
+    }
+
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(params.password, salt);
+
+    const payload = {
+      first_name: params.first_name.trim(),
+      last_name: params.last_name.trim(),
+      email: params.email.toLowerCase(),
+      password: passwordHash,
+      salt,
+      role: 'Visitor',
+      created_by: null,
+      is_active: true,
+      country: params.country || '',
+      state: params.state || '',
+      city: params.city || '',
+      pincode: params.pincode || '',
+      full_address: params.full_address || '',
+    };
+
+    const newUser = await UserManager.createUserProfile(payload);
+
+    res.status(201).json({
+      success: true,
+      message: 'Signup successful',
+      data: {
+        _id: newUser._id,
+        first_name: newUser.first_name,
+        last_name: newUser.last_name,
+        email: newUser.email,
+        role: newUser.role,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 /**
  * ==================== CREATE USER ====================
@@ -211,8 +312,30 @@ export const deleteUserProfile = async (req, res) => {
  */
 export const getUserList = async (req, res) => {
   try {
-    const userList = await UserManager.getUserList({});
-    res.status(200).json({ success: true, userList });
+    const { role, search } = req.query;
+
+    const filter = {};
+
+    // 🔹 ROLE FILTER (Admin / Super Admin / Visitor)
+    if (role) {
+      filter.role = role;
+    }
+
+    // 🔹 SEARCH FILTER (name / email)
+    if (search) {
+      filter.$or = [
+        { first_name: { $regex: search, $options: "i" } },
+        { last_name: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const userList = await UserManager.getUserList(filter);
+
+    res.status(200).json({
+      success: true,
+      userList,
+    });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
@@ -260,45 +383,77 @@ export const getUserDetail = async (req, res) => {
 export const loginUser = async (req, res) => {
   try {
     if (!req.body.payload) {
-      return res.status(406).json({ success: false, message: 'Request data missing' });
+      return res.status(406).json({
+        success: false,
+        message: 'Request data missing',
+      });
     }
 
-    const params = req.body.payload;
+    const { email, password } = req.body.payload;
 
-    if (!params.email || !params.password) {
-      return res.status(406).json({ success: false, message: 'Email and password required' });
+    if (!email || !password) {
+      return res.status(406).json({
+        success: false,
+        message: 'Email and password required',
+      });
     }
 
     const user = await UserManager.getUserDetails({
-      email: params.email.toLowerCase()
+      email: email.toLowerCase(),
     });
 
     if (!user) {
-      return res.status(404).json({ success: false, message: 'User not registered' });
+      return res.status(404).json({
+        success: false,
+        message: 'User not registered',
+      });
     }
 
-    const isMatch = await bcrypt.compare(params.password, user.password);
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ success: false, message: 'Invalid email or password' });
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password',
+      });
     }
 
     if (!user.is_active) {
-      return res.status(403).json({ success: false, message: 'Account is deactivated' });
+      return res.status(403).json({
+        success: false,
+        message: 'Account is deactivated',
+      });
     }
 
-    res.status(200).json({
+    // JWT TOKEN GENERATION
+    const token = jwt.sign(
+      {
+        user_id: user._id,
+        role: user.role,
+        email: user.email,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: process.env.JWT_EXPIRES_IN || '1d',
+      }
+    );
+
+    return res.status(200).json({
       success: true,
       message: 'Login successful',
-      data: {
+      token,
+      user: {
         _id: user._id,
         first_name: user.first_name,
         last_name: user.last_name,
         email: user.email,
-        role: user.role
-      }
+        role: user.role,
+      },
     });
   } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 

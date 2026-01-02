@@ -1,5 +1,5 @@
 import express from 'express';
-import { cancelRegistration, createUserProfile, deleteUserProfile, getEventRegistrations, getUserDetail, getUserList, getUserRegistrations, loginUser, registerEvent, updateUserProfile } from '../controllers/userController.js';
+import { cancelRegistration, createUserProfile, deleteUserProfile, getEventRegistrations, getUserDetail, getUserList, getUserRegistrations, loginUser, registerEvent, signupUser, updateUserProfile } from '../controllers/userController.js';
 
 const router = express.Router();
 
@@ -9,6 +9,7 @@ router.get('/list',                         getUserList);
 router.get('/details',                      getUserDetail);
 router.post('/delete',                      deleteUserProfile);
 router.post('/login',                       loginUser);
+router.post('/signup',                      signupUser); 
 
 // User Event Mapping Routes
 
