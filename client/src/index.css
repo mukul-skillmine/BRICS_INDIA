@@ -1,13 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@100..900&display=swap');
+
+
 body {
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
     margin-inline: auto;
 }
 
+:root {
+  --primary: #FEE8D2;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html, body {
+  touch-action: manipulation;
+  overscroll-behavior: none;
+}
 
 *{
   font-family: "Inter", sans-serif;
@@ -57,3 +68,37 @@ body {
         transform: rotate(360deg);
     }
     } 
+
+.bg-gradient-orange {
+  background: linear-gradient(to right top, #FEE8D2, #FEE8D200);
+}
+
+/* Primary action button */
+.btn-primary {
+  width: 100%;
+  margin-bottom: 4rem; /* mb-16 */
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.75rem 0; /* py-3 */
+  border-radius: 0.5rem;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-primary-enabled {
+  background-color: #1f4788;
+  cursor: pointer;
+}
+
+.btn-primary-enabled:hover {
+  background-color: #1f4888;
+  transform: scale(1.02);
+}
+
+.btn-primary-enabled:active {
+  transform: scale(0.98);
+}
+
+.btn-primary-disabled {
+  background-color: #85a4d2;
+  cursor: not-allowed;
+}

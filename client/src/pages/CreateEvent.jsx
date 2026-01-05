@@ -127,11 +127,6 @@ const CreateEvent = ({ setShowModal }) => {
             className="text-xl cursor-pointer hover:text-2xl transition-all duration-200 ease-out "
           />
         </div>
-
-        <div>
-          <input type="text" placeholder="Search" />
-        </div>
-
         <form className="" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex">
             <div className="p-8 w-[75%]">

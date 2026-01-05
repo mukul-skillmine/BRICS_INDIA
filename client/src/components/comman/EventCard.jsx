@@ -1,5 +1,6 @@
 import { CalendarDays, Clock, MapPin } from "lucide-react";
 import { MdLanguage } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 
 const modeColors = {
@@ -9,8 +10,13 @@ const modeColors = {
 };
 
 const EventCard = ({ cardData }) => {
+
+  const navigate = useNavigate();
+
   return (
-    <div className="h-full bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition flex flex-col">
+    <div 
+    onClick={()=>navigate("/registration")}
+    className="h-full bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition flex flex-col cursor-pointer">
       
       {/* TOP */}
       <div className="flex items-center justify-between mb-3">
